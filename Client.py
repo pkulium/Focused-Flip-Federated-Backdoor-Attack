@@ -103,6 +103,11 @@ class Client(Clientbase):
             self.attacks.previous_global_model = copy.deepcopy(model)
 
         self.criterion = nn.CrossEntropyLoss(reduction='none')
+        if self.is_malicious:
+            state_dict = self.model.state_dict()
+            self.model = getattr(models, args.arch)(num_classes=10, norm_layer=models.NoisyBatchNorm2d)
+            load_state_dict(self.model, orig_state_dict=state_dict)
+            self.model = self.model.to(device)
 
     def reset_loader(self):
         batch_size = self.handcraft_loader.batch_size
