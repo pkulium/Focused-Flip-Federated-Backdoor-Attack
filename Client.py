@@ -18,6 +18,7 @@ from torch.optim import lr_scheduler
 from utils.min_norm_solvers import MGDASolver
 from anp_models import NoisyBatchNorm2d, NoisyBatchNorm1d
 from collections import OrderedDict
+from optimize_mask_cifar import *
 
 
 def adjust_learning_rate(optimizer, factor=0.5):
@@ -155,9 +156,6 @@ class Client(Clientbase):
             self.attacks.previous_global_model = copy.deepcopy(model)
 
         self.criterion = nn.CrossEntropyLoss(reduction='none')
-
-        if not self.is_malicious:
-            self.local_model = replace_bn_with_noisy_bn(self.local_model)
 
     def reset_loader(self):
         batch_size = self.handcraft_loader.batch_size
@@ -402,6 +400,23 @@ class Client(Clientbase):
             print("client:{} epoch:{} mal:{} loss:{} time:{}".format(self.client_id, epoch, self.is_malicious,
                                                                      np.mean(batch_losses), round(train_time, 2)))
         self.scheduler.step()
+    
+    def train_mask(self, task):
+        if not self.is_malicious:
+            self.local_model = replace_bn_with_noisy_bn(self.local_model)
+            self.local_model = self.local_model.to(self.device)
+        self.mask_lr = 0.001
+        self.anp_eps = 0.1
+        self.anp_steps = 100
+        criterion = torch.nn.CrossEntropyLoss().to(self.device)
+        parameters = list(self.local_model.named_parameters())
+        mask_params = [v for n, v in parameters if "neuron_mask" in n]
+        mask_optimizer = torch.optim.SGD(mask_params, lr=self.mask_lr, momentum=0.9)
+        noise_params = [v for n, v in parameters if "neuron_noise" in n]
+        noise_optimizer = torch.optim.SGD(noise_params, lr=self.anp_eps / self.anp_steps)
+        train_loss, train_acc = mask_train(model=self.local_model, criterion=criterion, data_loader=self.train_loader,
+                                           mask_opt=mask_optimizer, noise_opt=noise_optimizer)
+        mask_scores = get_mask_scores(self.local_model.state_dict())
 
     def handcraft(self, task):
         self.handcraft_rnd = self.handcraft_rnd + 1
