@@ -16,6 +16,8 @@ import time
 from torch.optim import lr_scheduler
 
 from utils.min_norm_solvers import MGDASolver
+from anp_models import NoisyBatchNorm2d, NoisyBatchNorm1d
+from collections import OrderedDict
 
 
 def adjust_learning_rate(optimizer, factor=0.5):
@@ -23,6 +25,56 @@ def adjust_learning_rate(optimizer, factor=0.5):
     for param_group in optimizer.param_groups:
         param_group['lr'] = param_group['lr'] * factor
 
+def load_state_dict(net, orig_state_dict):
+    if 'state_dict' in orig_state_dict.keys():
+        orig_state_dict = orig_state_dict['state_dict']
+    if "state_dict" in orig_state_dict.keys():
+        orig_state_dict = orig_state_dict["state_dict"]
+
+    new_state_dict = OrderedDict()
+    for k, v in net.state_dict().items():
+        if k in orig_state_dict.keys():
+            new_state_dict[k] = orig_state_dict[k]
+        elif 'running_mean_noisy' in k or 'running_var_noisy' in k or 'num_batches_tracked_noisy' in k:
+            new_state_dict[k] = orig_state_dict[k[:-6]].clone().detach()
+        else:
+            new_state_dict[k] = v
+    net.load_state_dict(new_state_dict)
+
+def replace_bn_with_noisy_bn(module: nn.Module) -> nn.Module:
+    """Recursively replace all BatchNorm layers with NoisyBatchNorm layers while preserving weights."""
+    for name, child in module.named_children():
+        if isinstance(child, nn.BatchNorm2d):
+            # Create a new NoisyBatchNorm2d layer
+            new_layer = NoisyBatchNorm2d(child.num_features)
+            
+            # Copy weights and biases
+            new_layer.weight.data = child.weight.data.clone().detach()
+            new_layer.bias.data = child.bias.data.clone().detach()
+            
+            # Copy running mean and variance
+            new_layer.running_mean = child.running_mean.clone().detach()
+            new_layer.running_var = child.running_var.clone().detach()
+            
+            # Replace the original layer with the new layer
+            setattr(module, name, new_layer)
+        elif isinstance(child, nn.BatchNorm1d):
+            # Create a new NoisyBatchNorm1d layer
+            new_layer = NoisyBatchNorm1d(child.num_features)
+            
+            # Copy weights and biases
+            new_layer.weight.data = child.weight.data.clone().detach()
+            new_layer.bias.data = child.bias.data.clone().detach()
+            
+            # Copy running mean and variance
+            new_layer.running_mean = child.running_mean.clone().detach()
+            new_layer.running_var = child.running_var.clone().detach()
+            
+            # Replace the original layer with the new layer
+            setattr(module, name, new_layer)
+        else:
+            replace_bn_with_noisy_bn(child)
+    return module
 
 class Clientbase:
 
@@ -103,11 +155,9 @@ class Client(Clientbase):
             self.attacks.previous_global_model = copy.deepcopy(model)
 
         self.criterion = nn.CrossEntropyLoss(reduction='none')
-        if self.is_malicious:
-            state_dict = self.model.state_dict()
-            self.model = getattr(models, args.arch)(num_classes=10, norm_layer=models.NoisyBatchNorm2d)
-            load_state_dict(self.model, orig_state_dict=state_dict)
-            self.model = self.model.to(device)
+
+        if not self.is_malicious:
+            self.model = replace_bn_with_noisy_bn(self.model)
 
     def reset_loader(self):
         batch_size = self.handcraft_loader.batch_size
