@@ -157,7 +157,7 @@ class Client(Clientbase):
         self.criterion = nn.CrossEntropyLoss(reduction='none')
 
         if not self.is_malicious:
-            self.model = replace_bn_with_noisy_bn(self.model)
+            self.local_model = replace_bn_with_noisy_bn(self.local_model)
 
     def reset_loader(self):
         batch_size = self.handcraft_loader.batch_size
