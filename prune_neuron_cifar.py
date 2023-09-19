@@ -8,34 +8,34 @@ from torchvision.datasets import CIFAR10
 import torchvision.transforms as transforms
 
 import models
-import data.poison_cifar as poison
+# import data.poison_cifar as poison
 
 parser = argparse.ArgumentParser(description='Train poisoned networks')
 
 # Basic model parameters.
-parser.add_argument('--arch', type=str, default='resnet18',
-                    choices=['resnet18', 'resnet34', 'resnet50', 'resnet101', 'resnet152', 'MobileNetV2', 'vgg19_bn'])
-parser.add_argument('--checkpoint', type=str, required=True, help='The checkpoint to be pruned')
-parser.add_argument('--widen-factor', type=int, default=1, help='widen_factor for WideResNet')
-parser.add_argument('--batch-size', type=int, default=128, help='the batch size for dataloader')
-parser.add_argument('--data-dir', type=str, default='../data', help='dir to the dataset')
-parser.add_argument('--output-dir', type=str, default='logs/models/')
+# parser.add_argument('--arch', type=str, default='resnet18',
+#                     choices=['resnet18', 'resnet34', 'resnet50', 'resnet101', 'resnet152', 'MobileNetV2', 'vgg19_bn'])
+# parser.add_argument('--checkpoint', type=str, required=True, help='The checkpoint to be pruned')
+# parser.add_argument('--widen-factor', type=int, default=1, help='widen_factor for WideResNet')
+# parser.add_argument('--batch-size', type=int, default=128, help='the batch size for dataloader')
+# parser.add_argument('--data-dir', type=str, default='../data', help='dir to the dataset')
+# parser.add_argument('--output-dir', type=str, default='logs/models/')
 
-parser.add_argument('--trigger-info', type=str, default='', help='The information of backdoor trigger')
-parser.add_argument('--poison-type', type=str, default='benign', choices=['badnets', 'blend', 'clean-label', 'benign'],
-                    help='type of backdoor attacks for evaluation')
-parser.add_argument('--poison-target', type=int, default=0, help='target class of backdoor attack')
-parser.add_argument('--trigger-alpha', type=float, default=1.0, help='the transparency of the trigger pattern.')
+# parser.add_argument('--trigger-info', type=str, default='', help='The information of backdoor trigger')
+# parser.add_argument('--poison-type', type=str, default='benign', choices=['badnets', 'blend', 'clean-label', 'benign'],
+#                     help='type of backdoor attacks for evaluation')
+# parser.add_argument('--poison-target', type=int, default=0, help='target class of backdoor attack')
+# parser.add_argument('--trigger-alpha', type=float, default=1.0, help='the transparency of the trigger pattern.')
 
-parser.add_argument('--mask-file', type=str, required=True, help='The text file containing the mask values')
-parser.add_argument('--pruning-by', type=str, default='threshold', choices=['number', 'threshold'])
-parser.add_argument('--pruning-max', type=float, default=0.90, help='the maximum number/threshold for pruning')
-parser.add_argument('--pruning-step', type=float, default=0.05, help='the step size for evaluating the pruning')
+# parser.add_argument('--mask-file', type=str, required=True, help='The text file containing the mask values')
+# parser.add_argument('--pruning-by', type=str, default='threshold', choices=['number', 'threshold'])
+# parser.add_argument('--pruning-max', type=float, default=0.90, help='the maximum number/threshold for pruning')
+# parser.add_argument('--pruning-step', type=float, default=0.05, help='the step size for evaluating the pruning')
 
-args = parser.parse_args()
-args_dict = vars(args)
-print(args_dict)
-os.makedirs(args.output_dir, exist_ok=True)
+# args = parser.parse_args()
+# args_dict = vars(args)
+# print(args_dict)
+# os.makedirs(args.output_dir, exist_ok=True)
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
