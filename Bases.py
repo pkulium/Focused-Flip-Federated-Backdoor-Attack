@@ -90,11 +90,15 @@ class FederatedBackdoorExperiment:
             self.server.broadcast_model_weights(self.clients)
             chosen_ids = self.server.select_participated_clients(fixed_mal=[])
             for client in self.clients:
+                client.global_epoch = epoch
                 if client.client_id not in chosen_ids:
                     client.idle()
                 else:
                     client.handcraft(self.task)
-                    client.train(self.task)
+                    if epoch != 2:
+                        client.train(self.task)
+                    else:
+                        client.train_mask(self.task)
             self.server.aggregate_global_model(self.clients, chosen_ids, None)
             print('Round {}: FedAvg Testing'.format(epoch))
             fl_report.record_round_vars(self.test(epoch, backdoor=False))
@@ -113,15 +117,11 @@ class FederatedBackdoorExperiment:
             self.server.broadcast_model_weights(self.clients)
             chosen_ids = self.server.select_participated_clients(fixed_mal=[])
             for client in self.clients:
-                client.global_epoch = epoch
                 if client.client_id not in chosen_ids:
                     client.idle()
                 else:
                     client.handcraft(self.task)
-                    if epoch != 2:
-                        client.train(self.task)
-                    else:
-                        client.train_mask(self.task)
+                    client.train(self.task)
             self.server.aggregate_global_model(self.clients, chosen_ids, None)
             print('Round {}: FedAvg Testing'.format(epoch))
             fl_report.record_round_vars(self.test(epoch, backdoor=False), notation={'is_distill': False})
