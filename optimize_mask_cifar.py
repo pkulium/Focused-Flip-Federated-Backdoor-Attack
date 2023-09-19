@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader, RandomSampler
 from torchvision.datasets import CIFAR10
 import torchvision.transforms as transforms
 
-import models
+from models.anp_batchnorm import NoisyBatchNorm2d, NoisyBatchNorm1d
 # import data.poison_cifar as poison
 
 # parser = argparse.ArgumentParser(description='Train poisoned networks')
@@ -87,7 +87,7 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 #     # Step 2: load model checkpoints and trigger info
 #     state_dict = torch.load(args.checkpoint, map_location=device)
-#     net = getattr(models, args.arch)(num_classes=10, norm_layer=models.NoisyBatchNorm2d)
+#     net = getattr(models, args.arch)(num_classes=10, norm_layer=NoisyBatchNorm2d)
 #     load_state_dict(net, orig_state_dict=state_dict)
 #     net = net.to(device)
 #     criterion = torch.nn.CrossEntropyLoss().to(device)
@@ -147,25 +147,25 @@ def sign_grad(model):
 
 def perturb(model, is_perturbed=True):
     for name, module in model.named_modules():
-        if isinstance(module, models.NoisyBatchNorm2d) or isinstance(module, models.NoisyBatchNorm1d):
+        if isinstance(module, NoisyBatchNorm2d) or isinstance(module, NoisyBatchNorm1d):
             module.perturb(is_perturbed=is_perturbed)
 
 
 def include_noise(model):
     for name, module in model.named_modules():
-        if isinstance(module, models.NoisyBatchNorm2d) or isinstance(module, models.NoisyBatchNorm1d):
+        if isinstance(module, NoisyBatchNorm2d) or isinstance(module, NoisyBatchNorm1d):
             module.include_noise()
 
 
 def exclude_noise(model):
     for name, module in model.named_modules():
-        if isinstance(module, models.NoisyBatchNorm2d) or isinstance(module, models.NoisyBatchNorm1d):
+        if isinstance(module, NoisyBatchNorm2d) or isinstance(module, NoisyBatchNorm1d):
             module.exclude_noise()
 
 
 def reset(model, rand_init):
     for name, module in model.named_modules():
-        if isinstance(module, models.NoisyBatchNorm2d) or isinstance(module, models.NoisyBatchNorm1d):
+        if isinstance(module, NoisyBatchNorm2d) or isinstance(module, NoisyBatchNorm1d):
             module.reset(rand_init=rand_init, eps=args.anp_eps)
 
 
