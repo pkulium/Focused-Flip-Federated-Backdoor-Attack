@@ -47,10 +47,13 @@ class Serverbase:
     #         server_param.data = server_param.data + user_param.data.clone() * ratio
 
     def add_weights(self, averaged_weights: OrderedDict, client_weights: OrderedDict, ratio):
+        mask = {}
         for layer in client_weights.keys():
             if layer not in averaged_weights:
+                mask[layer] = client_weights[layer]
                 continue
             averaged_weights[layer] = averaged_weights[layer] + client_weights[layer] * ratio
+        return mask
 
     def robust_lr_add_weights(self, original_params, robust_lrs, update, prop):
         for layer in original_params.keys():
@@ -140,11 +143,12 @@ class ServerAvg(Serverbase):
             client = clients[id]
             total_prop = total_prop + client.n_sample * pt
 
+        masks = {}
         for pt, id in zip(pts, chosen_ids):
             client = clients[id]
             prop = client.n_sample * pt / total_prop
-            self.add_weights(averaged_weights, client.local_model.state_dict(), prop)
-
+            masks[id] = self.add_weights(averaged_weights, client.local_model.state_dict(), prop)
+        print(masks)
         # for client in clients:
         #     client.local_model.to('cpu')
 

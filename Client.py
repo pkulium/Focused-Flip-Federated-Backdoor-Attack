@@ -158,6 +158,13 @@ class Client(Clientbase):
             self.attacks.previous_global_model = copy.deepcopy(model)
 
         self.criterion = nn.CrossEntropyLoss(reduction='none')
+        if not self.is_malicious:
+            self.local_model = replace_bn_with_noisy_bn(self.local_model)
+            self.local_model = self.local_model.to(self.device)
+            self.local_model.mask_lr = 0.2
+            self.local_model.anp_eps = 0.4
+            self.local_model.anp_steps = 1
+            self.local_model.anp_alpha = 0.2
 
     def reset_loader(self):
         batch_size = self.handcraft_loader.batch_size
@@ -407,13 +414,6 @@ class Client(Clientbase):
         if self.is_malicious:
             self.train(task)
             return
-        else:
-            self.local_model = replace_bn_with_noisy_bn(self.local_model)
-            self.local_model = self.local_model.to(self.device)
-        self.local_model.mask_lr = 0.2
-        self.local_model.anp_eps = 0.4
-        self.local_model.anp_steps = 1
-        self.local_model.anp_alpha = 0.2
         criterion = torch.nn.CrossEntropyLoss().to(self.device)
         parameters = list(self.local_model.named_parameters())
         mask_params = [v for n, v in parameters if "neuron_mask" in n]
