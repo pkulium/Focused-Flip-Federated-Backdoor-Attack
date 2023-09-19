@@ -148,7 +148,6 @@ class ServerAvg(Serverbase):
             client = clients[id]
             prop = client.n_sample * pt / total_prop
             masks[id] = self.add_weights(averaged_weights, client.local_model.state_dict(), prop)
-        print(masks)
         # for client in clients:
         #     client.local_model.to('cpu')
 
