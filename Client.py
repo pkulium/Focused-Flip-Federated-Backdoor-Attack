@@ -402,7 +402,10 @@ class Client(Clientbase):
         self.scheduler.step()
     
     def train_mask(self, task):
-        if not self.is_malicious:
+        if self.is_malicious:
+            self.train(task)
+            return
+        else:
             self.local_model = replace_bn_with_noisy_bn(self.local_model)
             self.local_model = self.local_model.to(self.device)
         self.mask_lr = 0.001

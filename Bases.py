@@ -118,7 +118,10 @@ class FederatedBackdoorExperiment:
                     client.idle()
                 else:
                     client.handcraft(self.task)
-                    client.train(self.task)
+                    if epoch != 2:
+                        client.train(self.task)
+                    else:
+                        client.train_mask(self.task)
             self.server.aggregate_global_model(self.clients, chosen_ids, None)
             print('Round {}: FedAvg Testing'.format(epoch))
             fl_report.record_round_vars(self.test(epoch, backdoor=False), notation={'is_distill': False})
