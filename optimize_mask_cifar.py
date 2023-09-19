@@ -166,7 +166,7 @@ def exclude_noise(model):
 def reset(model, rand_init):
     for name, module in model.named_modules():
         if isinstance(module, NoisyBatchNorm2d) or isinstance(module, NoisyBatchNorm1d):
-            module.reset(rand_init=rand_init, eps=args.anp_eps)
+            module.reset(rand_init=rand_init, eps=model.anp_eps)
 
 
 def mask_train(model, criterion, mask_opt, noise_opt, data_loader):
