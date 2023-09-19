@@ -95,7 +95,7 @@ class FederatedBackdoorExperiment:
                     client.idle()
                 else:
                     client.handcraft(self.task)
-                    if epoch != 2:
+                    if epoch:
                         client.train(self.task)
                     else:
                         client.train_mask(self.task)
