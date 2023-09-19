@@ -16,7 +16,7 @@ import time
 from torch.optim import lr_scheduler
 
 from utils.min_norm_solvers import MGDASolver
-from anp_models import NoisyBatchNorm2d, NoisyBatchNorm1d
+from models import NoisyBatchNorm2d, NoisyBatchNorm1d
 from collections import OrderedDict
 from optimize_mask_cifar import *
 
