@@ -423,6 +423,7 @@ class Client(Clientbase):
         train_loss, train_acc = mask_train(model=self.local_model, criterion=criterion, data_loader=self.train_loader,
                                            mask_opt=mask_optimizer, noise_opt=noise_optimizer)
         mask_scores = get_mask_scores(self.local_model.state_dict())
+        
         save_mask_scores(self.local_model.state_dict(), os.path.join('masks', 'mask_values.txt'))
 
     def handcraft(self, task):

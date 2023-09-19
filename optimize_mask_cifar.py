@@ -238,6 +238,7 @@ def test(model, criterion, data_loader):
     return loss, acc
 
 
+
 def save_mask_scores(state_dict, file_name):
     mask_values = []
     count = 0
