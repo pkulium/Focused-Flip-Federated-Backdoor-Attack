@@ -10,7 +10,7 @@ import torchvision.transforms as transforms
 import models
 # import data.poison_cifar as poison
 
-parser = argparse.ArgumentParser(description='Train poisoned networks')
+# parser = argparse.ArgumentParser(description='Train poisoned networks')
 
 # Basic model parameters.
 # parser.add_argument('--arch', type=str, default='resnet18',
@@ -36,64 +36,65 @@ parser = argparse.ArgumentParser(description='Train poisoned networks')
 # args_dict = vars(args)
 # print(args_dict)
 # os.makedirs(args.output_dir, exist_ok=True)
+args = {}
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
-def main():
-    MEAN_CIFAR10 = (0.4914, 0.4822, 0.4465)
-    STD_CIFAR10 = (0.2023, 0.1994, 0.2010)
-    transform_test = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize(MEAN_CIFAR10, STD_CIFAR10)
-    ])
+# def main():
+#     MEAN_CIFAR10 = (0.4914, 0.4822, 0.4465)
+#     STD_CIFAR10 = (0.2023, 0.1994, 0.2010)
+#     transform_test = transforms.Compose([
+#         transforms.ToTensor(),
+#         transforms.Normalize(MEAN_CIFAR10, STD_CIFAR10)
+#     ])
 
-    # Step 1: create poisoned / clean test set
-    if args.trigger_info:
-        trigger_info = torch.load(args.trigger_info, map_location=device)
-    else:
-        if args.poison_type == 'benign':
-            trigger_info = None
-        else:
-            triggers = {'badnets': 'checkerboard_1corner',
-                        'clean-label': 'checkerboard_4corner',
-                        'blend': 'gaussian_noise'}
-            trigger_type = triggers[args.poison_type]
-            pattern, mask = poison.generate_trigger(trigger_type=trigger_type)
-            trigger_info = {'trigger_pattern': pattern[np.newaxis, :, :, :], 'trigger_mask': mask[np.newaxis, :, :, :],
-                            'trigger_alpha': args.trigger_alpha, 'poison_target': np.array([args.poison_target])}
+#     # Step 1: create poisoned / clean test set
+#     if args.trigger_info:
+#         trigger_info = torch.load(args.trigger_info, map_location=device)
+#     else:
+#         if args.poison_type == 'benign':
+#             trigger_info = None
+#         else:
+#             triggers = {'badnets': 'checkerboard_1corner',
+#                         'clean-label': 'checkerboard_4corner',
+#                         'blend': 'gaussian_noise'}
+#             trigger_type = triggers[args.poison_type]
+#             pattern, mask = poison.generate_trigger(trigger_type=trigger_type)
+#             trigger_info = {'trigger_pattern': pattern[np.newaxis, :, :, :], 'trigger_mask': mask[np.newaxis, :, :, :],
+#                             'trigger_alpha': args.trigger_alpha, 'poison_target': np.array([args.poison_target])}
 
-    clean_test = CIFAR10(root=args.data_dir, train=False, download=True, transform=transform_test)
-    poison_test = poison.add_predefined_trigger_cifar(data_set=clean_test, trigger_info=trigger_info)
-    poison_test_loader = DataLoader(poison_test, batch_size=args.batch_size, num_workers=0)
-    clean_test_loader = DataLoader(clean_test, batch_size=args.batch_size, num_workers=0)
+#     clean_test = CIFAR10(root=args.data_dir, train=False, download=True, transform=transform_test)
+#     poison_test = poison.add_predefined_trigger_cifar(data_set=clean_test, trigger_info=trigger_info)
+#     poison_test_loader = DataLoader(poison_test, batch_size=args.batch_size, num_workers=0)
+#     clean_test_loader = DataLoader(clean_test, batch_size=args.batch_size, num_workers=0)
 
-    # Step 2: load model checkpoints and trigger info
-    net = getattr(models, args.arch)(num_classes=10)
-    net.load_state_dict(torch.load(args.checkpoint, map_location=device))
-    net = net.to(device)
-    criterion = torch.nn.CrossEntropyLoss().to(device)
+#     # Step 2: load model checkpoints and trigger info
+#     net = getattr(models, args.arch)(num_classes=10)
+#     net.load_state_dict(torch.load(args.checkpoint, map_location=device))
+#     net = net.to(device)
+#     criterion = torch.nn.CrossEntropyLoss().to(device)
 
-    # Step 3: pruning
-    mask_values = read_data(args.mask_file)
-    mask_values = sorted(mask_values, key=lambda x: float(x[2]))
-    print('No. \t Layer Name \t Neuron Idx \t Mask \t PoisonLoss \t PoisonACC \t CleanLoss \t CleanACC')
-    cl_loss, cl_acc = test(model=net, criterion=criterion, data_loader=clean_test_loader)
-    po_loss, po_acc = test(model=net, criterion=criterion, data_loader=poison_test_loader)
-    print('0 \t None     \t None     \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f}'.format(po_loss, po_acc, cl_loss, cl_acc))
-    if args.pruning_by == 'threshold':
-        results = evaluate_by_threshold(
-            net, mask_values, pruning_max=args.pruning_max, pruning_step=args.pruning_step,
-            criterion=criterion, clean_loader=clean_test_loader, poison_loader=poison_test_loader
-        )
-    else:
-        results = evaluate_by_number(
-            net, mask_values, pruning_max=args.pruning_max, pruning_step=args.pruning_step,
-            criterion=criterion, clean_loader=clean_test_loader, poison_loader=poison_test_loader
-        )
-    file_name = os.path.join(args.output_dir, 'pruning_by_{}.txt'.format(args.pruning_by))
-    with open(file_name, "w") as f:
-        f.write('No \t Layer Name \t Neuron Idx \t Mask \t PoisonLoss \t PoisonACC \t CleanLoss \t CleanACC\n')
-        f.writelines(results)
+#     # Step 3: pruning
+#     mask_values = read_data(args.mask_file)
+#     mask_values = sorted(mask_values, key=lambda x: float(x[2]))
+#     print('No. \t Layer Name \t Neuron Idx \t Mask \t PoisonLoss \t PoisonACC \t CleanLoss \t CleanACC')
+#     cl_loss, cl_acc = test(model=net, criterion=criterion, data_loader=clean_test_loader)
+#     po_loss, po_acc = test(model=net, criterion=criterion, data_loader=poison_test_loader)
+#     print('0 \t None     \t None     \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f}'.format(po_loss, po_acc, cl_loss, cl_acc))
+#     if args.pruning_by == 'threshold':
+#         results = evaluate_by_threshold(
+#             net, mask_values, pruning_max=args.pruning_max, pruning_step=args.pruning_step,
+#             criterion=criterion, clean_loader=clean_test_loader, poison_loader=poison_test_loader
+#         )
+#     else:
+#         results = evaluate_by_number(
+#             net, mask_values, pruning_max=args.pruning_max, pruning_step=args.pruning_step,
+#             criterion=criterion, clean_loader=clean_test_loader, poison_loader=poison_test_loader
+#         )
+#     file_name = os.path.join(args.output_dir, 'pruning_by_{}.txt'.format(args.pruning_by))
+#     with open(file_name, "w") as f:
+#         f.write('No \t Layer Name \t Neuron Idx \t Mask \t PoisonLoss \t PoisonACC \t CleanLoss \t CleanACC\n')
+#         f.writelines(results)
 
 
 def read_data(file_name):

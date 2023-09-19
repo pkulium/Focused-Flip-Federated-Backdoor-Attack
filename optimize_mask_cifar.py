@@ -11,7 +11,7 @@ import torchvision.transforms as transforms
 import models
 # import data.poison_cifar as poison
 
-parser = argparse.ArgumentParser(description='Train poisoned networks')
+# parser = argparse.ArgumentParser(description='Train poisoned networks')
 
 # # Basic model parameters.
 # parser.add_argument('--arch', type=str, default='resnet18',
@@ -36,83 +36,83 @@ parser = argparse.ArgumentParser(description='Train poisoned networks')
 # parser.add_argument('--anp-steps', type=int, default=1)
 # parser.add_argument('--anp-alpha', type=float, default=0.2)
 
-args = parser.parse_args()
+args = {}
 # args_dict = vars(args)
 # print(args_dict)
 # os.makedirs(args.output_dir, exist_ok=True)
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
-def main():
-    MEAN_CIFAR10 = (0.4914, 0.4822, 0.4465)
-    STD_CIFAR10 = (0.2023, 0.1994, 0.2010)
-    transform_train = transforms.Compose([
-        transforms.RandomCrop(32, padding=4),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        transforms.Normalize(MEAN_CIFAR10, STD_CIFAR10)
-    ])
-    transform_test = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize(MEAN_CIFAR10, STD_CIFAR10)
-    ])
+# def main():
+#     MEAN_CIFAR10 = (0.4914, 0.4822, 0.4465)
+#     STD_CIFAR10 = (0.2023, 0.1994, 0.2010)
+#     transform_train = transforms.Compose([
+#         transforms.RandomCrop(32, padding=4),
+#         transforms.RandomHorizontalFlip(),
+#         transforms.ToTensor(),
+#         transforms.Normalize(MEAN_CIFAR10, STD_CIFAR10)
+#     ])
+#     transform_test = transforms.Compose([
+#         transforms.ToTensor(),
+#         transforms.Normalize(MEAN_CIFAR10, STD_CIFAR10)
+#     ])
 
-    # Step 1: create dataset - clean val set, poisoned test set, and clean test set.
-    if args.trigger_info:
-        trigger_info = torch.load(args.trigger_info, map_location=device)
-    else:
-        if args.poison_type == 'benign':
-            trigger_info = None
-        else:
-            triggers = {'badnets': 'checkerboard_1corner',
-                        'clean-label': 'checkerboard_4corner',
-                        'blend': 'gaussian_noise'}
-            trigger_type = triggers[args.poison_type]
-            pattern, mask = poison.generate_trigger(trigger_type=trigger_type)
-            trigger_info = {'trigger_pattern': pattern[np.newaxis, :, :, :], 'trigger_mask': mask[np.newaxis, :, :, :],
-                            'trigger_alpha': args.trigger_alpha, 'poison_target': np.array([args.poison_target])}
+#     # Step 1: create dataset - clean val set, poisoned test set, and clean test set.
+#     if args.trigger_info:
+#         trigger_info = torch.load(args.trigger_info, map_location=device)
+#     else:
+#         if args.poison_type == 'benign':
+#             trigger_info = None
+#         else:
+#             triggers = {'badnets': 'checkerboard_1corner',
+#                         'clean-label': 'checkerboard_4corner',
+#                         'blend': 'gaussian_noise'}
+#             trigger_type = triggers[args.poison_type]
+#             pattern, mask = poison.generate_trigger(trigger_type=trigger_type)
+#             trigger_info = {'trigger_pattern': pattern[np.newaxis, :, :, :], 'trigger_mask': mask[np.newaxis, :, :, :],
+#                             'trigger_alpha': args.trigger_alpha, 'poison_target': np.array([args.poison_target])}
 
-    orig_train = CIFAR10(root=args.data_dir, train=True, download=True, transform=transform_train)
-    _, clean_val = poison.split_dataset(dataset=orig_train, val_frac=args.val_frac,
-                                        perm=np.loadtxt('./data/cifar_shuffle.txt', dtype=int))
-    clean_test = CIFAR10(root=args.data_dir, train=False, download=True, transform=transform_test)
-    poison_test = poison.add_predefined_trigger_cifar(data_set=clean_test, trigger_info=trigger_info)
+#     orig_train = CIFAR10(root=args.data_dir, train=True, download=True, transform=transform_train)
+#     _, clean_val = poison.split_dataset(dataset=orig_train, val_frac=args.val_frac,
+#                                         perm=np.loadtxt('./data/cifar_shuffle.txt', dtype=int))
+#     clean_test = CIFAR10(root=args.data_dir, train=False, download=True, transform=transform_test)
+#     poison_test = poison.add_predefined_trigger_cifar(data_set=clean_test, trigger_info=trigger_info)
 
-    random_sampler = RandomSampler(data_source=clean_val, replacement=True,
-                                   num_samples=args.print_every * args.batch_size)
-    clean_val_loader = DataLoader(clean_val, batch_size=args.batch_size,
-                                  shuffle=False, sampler=random_sampler, num_workers=0)
-    poison_test_loader = DataLoader(poison_test, batch_size=args.batch_size, num_workers=0)
-    clean_test_loader = DataLoader(clean_test, batch_size=args.batch_size, num_workers=0)
+#     random_sampler = RandomSampler(data_source=clean_val, replacement=True,
+#                                    num_samples=args.print_every * args.batch_size)
+#     clean_val_loader = DataLoader(clean_val, batch_size=args.batch_size,
+#                                   shuffle=False, sampler=random_sampler, num_workers=0)
+#     poison_test_loader = DataLoader(poison_test, batch_size=args.batch_size, num_workers=0)
+#     clean_test_loader = DataLoader(clean_test, batch_size=args.batch_size, num_workers=0)
 
-    # Step 2: load model checkpoints and trigger info
-    state_dict = torch.load(args.checkpoint, map_location=device)
-    net = getattr(models, args.arch)(num_classes=10, norm_layer=models.NoisyBatchNorm2d)
-    load_state_dict(net, orig_state_dict=state_dict)
-    net = net.to(device)
-    criterion = torch.nn.CrossEntropyLoss().to(device)
+#     # Step 2: load model checkpoints and trigger info
+#     state_dict = torch.load(args.checkpoint, map_location=device)
+#     net = getattr(models, args.arch)(num_classes=10, norm_layer=models.NoisyBatchNorm2d)
+#     load_state_dict(net, orig_state_dict=state_dict)
+#     net = net.to(device)
+#     criterion = torch.nn.CrossEntropyLoss().to(device)
 
-    parameters = list(net.named_parameters())
-    mask_params = [v for n, v in parameters if "neuron_mask" in n]
-    mask_optimizer = torch.optim.SGD(mask_params, lr=args.lr, momentum=0.9)
-    noise_params = [v for n, v in parameters if "neuron_noise" in n]
-    noise_optimizer = torch.optim.SGD(noise_params, lr=args.anp_eps / args.anp_steps)
+#     parameters = list(net.named_parameters())
+#     mask_params = [v for n, v in parameters if "neuron_mask" in n]
+#     mask_optimizer = torch.optim.SGD(mask_params, lr=args.lr, momentum=0.9)
+#     noise_params = [v for n, v in parameters if "neuron_noise" in n]
+#     noise_optimizer = torch.optim.SGD(noise_params, lr=args.anp_eps / args.anp_steps)
 
-    # Step 3: train backdoored models
-    print('Iter \t lr \t Time \t TrainLoss \t TrainACC \t PoisonLoss \t PoisonACC \t CleanLoss \t CleanACC')
-    nb_repeat = int(np.ceil(args.nb_iter / args.print_every))
-    for i in range(nb_repeat):
-        start = time.time()
-        lr = mask_optimizer.param_groups[0]['lr']
-        train_loss, train_acc = mask_train(model=net, criterion=criterion, data_loader=clean_val_loader,
-                                           mask_opt=mask_optimizer, noise_opt=noise_optimizer)
-        cl_test_loss, cl_test_acc = test(model=net, criterion=criterion, data_loader=clean_test_loader)
-        po_test_loss, po_test_acc = test(model=net, criterion=criterion, data_loader=poison_test_loader)
-        end = time.time()
-        print('{} \t {:.3f} \t {:.1f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f}'.format(
-            (i + 1) * args.print_every, lr, end - start, train_loss, train_acc, po_test_loss, po_test_acc,
-            cl_test_loss, cl_test_acc))
-    save_mask_scores(net.state_dict(), os.path.join(args.output_dir, 'mask_values.txt'))
+#     # Step 3: train backdoored models
+#     print('Iter \t lr \t Time \t TrainLoss \t TrainACC \t PoisonLoss \t PoisonACC \t CleanLoss \t CleanACC')
+#     nb_repeat = int(np.ceil(args.nb_iter / args.print_every))
+#     for i in range(nb_repeat):
+#         start = time.time()
+#         lr = mask_optimizer.param_groups[0]['lr']
+#         train_loss, train_acc = mask_train(model=net, criterion=criterion, data_loader=clean_val_loader,
+#                                            mask_opt=mask_optimizer, noise_opt=noise_optimizer)
+#         cl_test_loss, cl_test_acc = test(model=net, criterion=criterion, data_loader=clean_test_loader)
+#         po_test_loss, po_test_acc = test(model=net, criterion=criterion, data_loader=poison_test_loader)
+#         end = time.time()
+#         print('{} \t {:.3f} \t {:.1f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f}'.format(
+#             (i + 1) * args.print_every, lr, end - start, train_loss, train_acc, po_test_loss, po_test_acc,
+#             cl_test_loss, cl_test_acc))
+#     save_mask_scores(net.state_dict(), os.path.join(args.output_dir, 'mask_values.txt'))
 
 
 def load_state_dict(net, orig_state_dict):
