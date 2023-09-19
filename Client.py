@@ -408,9 +408,10 @@ class Client(Clientbase):
         else:
             self.local_model = replace_bn_with_noisy_bn(self.local_model)
             self.local_model = self.local_model.to(self.device)
-        self.mask_lr = 0.001
-        self.anp_eps = 0.1
-        self.anp_steps = 100
+        self.mask_lr = 0.2
+        self.anp_eps = 0.4
+        self.anp_steps = 1
+        self.anp_alpha = 0.2
         criterion = torch.nn.CrossEntropyLoss().to(self.device)
         parameters = list(self.local_model.named_parameters())
         mask_params = [v for n, v in parameters if "neuron_mask" in n]

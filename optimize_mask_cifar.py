@@ -180,9 +180,9 @@ def mask_train(model, criterion, mask_opt, noise_opt, data_loader):
         nb_samples += images.size(0)
 
         # step 1: calculate the adversarial perturbation for neurons
-        if args.anp_eps > 0.0:
+        if model.anp_eps > 0.0:
             reset(model, rand_init=True)
-            for _ in range(args.anp_steps):
+            for _ in range(model.anp_steps):
                 noise_opt.zero_grad()
 
                 include_noise(model)
@@ -195,7 +195,7 @@ def mask_train(model, criterion, mask_opt, noise_opt, data_loader):
 
         # step 2: calculate loss and update the mask values
         mask_opt.zero_grad()
-        if args.anp_eps > 0.0:
+        if model.anp_eps > 0.0:
             include_noise(model)
             output_noise = model(images)
             loss_rob = criterion(output_noise, labels)
@@ -205,7 +205,7 @@ def mask_train(model, criterion, mask_opt, noise_opt, data_loader):
         exclude_noise(model)
         output_clean = model(images)
         loss_nat = criterion(output_clean, labels)
-        loss = args.anp_alpha * loss_nat + (1 - args.anp_alpha) * loss_rob
+        loss = model.anp_alpha * loss_nat + (1 - model.anp_alpha) * loss_rob
 
         pred = output_clean.data.max(1)[1]
         total_correct += pred.eq(labels.view_as(pred)).sum()
