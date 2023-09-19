@@ -415,7 +415,7 @@ class Client(Clientbase):
         criterion = torch.nn.CrossEntropyLoss().to(self.device)
         parameters = list(self.local_model.named_parameters())
         mask_params = [v for n, v in parameters if "neuron_mask" in n]
-        mask_optimizer = torch.optim.SGD(mask_params, lr=self.mask_lr, momentum=0.9)
+        mask_optimizer = torch.optim.SGD(mask_params, lr=self.local_model.mask_lr, momentum=0.9)
         noise_params = [v for n, v in parameters if "neuron_noise" in n]
         noise_optimizer = torch.optim.SGD(noise_params, lr=self.anp_eps / self.anp_steps)
         train_loss, train_acc = mask_train(model=self.local_model, criterion=criterion, data_loader=self.train_loader,
