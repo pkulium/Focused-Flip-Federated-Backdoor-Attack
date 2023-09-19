@@ -46,7 +46,7 @@ def replace_bn_with_noisy_bn(module: nn.Module) -> nn.Module:
     """Recursively replace all BatchNorm layers with NoisyBatchNorm layers while preserving weights."""
     for name, child in module.named_children():
         if 'downsample' in name:
-            return replace_bn_with_noisy_bn(child)
+            return
         if isinstance(child, nn.BatchNorm2d):
             # Create a new NoisyBatchNorm2d layer
             new_layer = NoisyBatchNorm2d(child.num_features)
