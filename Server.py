@@ -48,6 +48,8 @@ class Serverbase:
 
     def add_weights(self, averaged_weights: OrderedDict, client_weights: OrderedDict, ratio):
         for layer in client_weights.keys():
+            if layer not in averaged_weights:
+                continue
             averaged_weights[layer] = averaged_weights[layer] + client_weights[layer] * ratio
 
     def robust_lr_add_weights(self, original_params, robust_lrs, update, prop):
