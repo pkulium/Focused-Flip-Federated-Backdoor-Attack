@@ -145,8 +145,8 @@ class ServerAvg(Serverbase):
             client = clients[id]
             prop = client.n_sample * pt / total_prop
             self.add_weights(averaged_weights, client.local_model.state_dict(), prop)
-            if hasattr(client, 'mask_scores'):
-                mask_scores[id] = client.mask_scores
+            # if client.mask_scores is not None:
+                # mask_scores[id] = client.mask_scores
         # for client in clients:
         #     client.local_model.to('cpu')
 
