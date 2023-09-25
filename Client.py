@@ -426,7 +426,7 @@ class Client(Clientbase):
                                            mask_opt=mask_optimizer, noise_opt=noise_optimizer)
         self.mask_scores = get_mask_scores(self.local_model.state_dict())
         self.mask_scores = save_mask_scores(self.local_model.state_dict(), f'masks/mask_values_{self.client_id}.txt')
-        # mask_values = sorted(mask_values, key=lambda x: float(x[2]))
+        mask_values = sorted(self.mask_values, key=lambda x: float(x[2]))
         # prune_by_threshold(self.local_model, mask_values, pruning_max=0.90, pruning_step=0.05)
 
     def handcraft(self, task):
