@@ -107,6 +107,8 @@ class FederatedBackdoorExperiment:
                 saved_name = identifier + "_{}".format(epoch + 1)
                 save_report(fl_report, './{}'.format(saved_name))
             print('-' * 30)
+        torch.save(self.server.global_model.state_dict(), 'save/final_model.th')
+         
 
     def finetuning_training(self, identifier=None):
         fl_report.create_record(identifier, checkout=True)
