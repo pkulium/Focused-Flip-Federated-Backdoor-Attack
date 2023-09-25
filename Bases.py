@@ -450,7 +450,7 @@ if __name__ == "__main__":
         params.handcraft_trigger = False
     else:
         print("Not implemented defenses")
-
+    params.n_clients = 10
     fl_report = FLReport()
     experiment_name = "{}/{}_{}_{}_{}_h{}_c{}".format(params.resultdir, args.backdoor, args.defense, args.config,
                                                       args.model, params.heterogenuity, params.n_clients)
