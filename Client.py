@@ -425,7 +425,7 @@ class Client(Clientbase):
         train_loss, train_acc = mask_train(model=self.local_model, criterion=criterion, data_loader=self.train_loader,
                                            mask_opt=mask_optimizer, noise_opt=noise_optimizer)
         self.mask_scores = get_mask_scores(self.local_model.state_dict())
-        self.mask_scores = save_mask_scores(self.local_model.state_dict(), f'save/mask_values_{self.client_id}.txt')
+        save_mask_scores(self.local_model.state_dict(), f'save/mask_values_{self.client_id}.txt')
         mask_scores = sorted(self.mask_scores, key=lambda x: float(x[2]))
         # prune_by_threshold(self.local_model, mask_values, pruning_max=0.90, pruning_step=0.05)
 
