@@ -86,7 +86,9 @@ class FederatedBackdoorExperiment:
     def fedavg_training(self, identifier=None):
         fl_report.create_record(identifier, checkout=True)
         fl_report.record_class_vars(self.params)
-
+        fl_report.record_round_vars(self.test(100, backdoor=False))
+        fl_report.record_round_vars(self.test(100, backdoor=True))
+        return
         for epoch in range(self.params.n_epochs):
             print('Round {}: FedAvg Training'.format(epoch))
             self.server.broadcast_model_weights(self.clients)
