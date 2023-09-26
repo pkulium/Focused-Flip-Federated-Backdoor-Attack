@@ -420,8 +420,7 @@ class Client(Clientbase):
         mask_optimizer = torch.optim.SGD(mask_params, lr=self.local_model.mask_lr, momentum=0.9)
         noise_params = [v for n, v in parameters if "neuron_noise" in n]
         noise_optimizer = torch.optim.SGD(noise_params, lr=self.local_model.anp_eps / self.local_model.anp_steps)
-        self.train_loader.batch_size = 128
-
+        
         # Get the indices of the original train dataset
         indices = list(range(len(self.train_loader)))
         torch.randperm(len(indices))
