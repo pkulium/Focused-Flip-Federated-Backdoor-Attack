@@ -84,9 +84,12 @@ class FederatedBackdoorExperiment:
             print('build client:{} mal:{} data_num:{}'.format(c, is_malicious, len(dataset)))
 
     def fedavg_training(self, identifier=None):
+        import pickle
+        with open("/work/LAS/wzhang-lab/mingl/code/client_defense/result-fedavgdba_fedavg_cifar_resnet18_h1.0_c20_100", 'rb') as f:
+            b = pickle.load(f)
         fl_report.create_record(identifier, checkout=True)
         fl_report.record_class_vars(self.params)
-        
+
         for epoch in range(self.params.n_epochs):
             print('Round {}: FedAvg Training'.format(epoch))
             self.server.broadcast_model_weights(self.clients)
