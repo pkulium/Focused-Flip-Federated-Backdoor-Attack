@@ -40,7 +40,7 @@ class FederatedBackdoorExperiment:
         self.task.init_federated_task()
 
         base_model = self.task.build_model()
-        
+
         base_model.load_state_dict(torch.load('save/final_model.th'))
         base_optimizer = self.task.build_optimizer(base_model)
         splited_dataset = self.task.sample_dirichlet_train_data(params.n_clients)
@@ -109,7 +109,7 @@ class FederatedBackdoorExperiment:
                 saved_name = identifier + "_{}".format(epoch + 1)
                 save_report(fl_report, './{}'.format(saved_name))
             print('-' * 30)
-        torch.save(self.server.global_model.state_dict(), '/work/LAS/wzhang-lab/mingl/code/client_defense/save/final_model.th')
+        # torch.save(self.server.global_model.state_dict(), '/work/LAS/wzhang-lab/mingl/code/client_defense/save/final_model.th')
          
 
     def finetuning_training(self, identifier=None):
