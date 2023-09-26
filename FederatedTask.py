@@ -22,7 +22,7 @@ from metrics.metric import Metric
 from models.simple import SimpleNet
 import os
 import sys
-
+from anp_models import *
 
 class TinyImageNet(Dataset):
     def __init__(self, root, train=True, transform=None):
@@ -458,7 +458,7 @@ class Cifar10FederatedTask(FederatedTask):
                 # model is pretrained on ImageNet changing classes to CIFAR
                 model.fc = nn.Linear(512, len(self.classes))
             else:
-                model = resnet18(pretrained=False, num_classes=len(self.classes))
+                model = resnet18(pretrained=False, num_classes=len(self.classes), norm_layer=NoisyBatchNorm2d)
                 print("resnet18")
             return model
         elif self.params.model == 'simple':
