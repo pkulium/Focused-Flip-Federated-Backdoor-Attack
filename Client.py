@@ -420,19 +420,9 @@ class Client(Clientbase):
         mask_optimizer = torch.optim.SGD(mask_params, lr=self.local_model.mask_lr, momentum=0.9)
         noise_params = [v for n, v in parameters if "neuron_noise" in n]
         noise_optimizer = torch.optim.SGD(noise_params, lr=self.local_model.anp_eps / self.local_model.anp_steps)
-        
-        # Get the indices of the original train dataset
-        indices = list(range(len(self.train_loader)))
-        torch.randperm(len(indices))
-        selected_indices = indices[:500]
-
-        # Create a subset using the selected indices
-        subset = Subset(self.train_loader, selected_indices)
-        # Create a new DataLoader with batch size 128
-        new_train_loader = DataLoader(subset, batch_size=128, shuffle=True)
-
+        self.train_loader.batch_size = 128
         for epoch in range(100):
-            train_loss, train_acc = mask_train(model=self.local_model, criterion=criterion, data_loader=new_train_loader,
+            train_loss, train_acc = mask_train(model=self.local_model, criterion=criterion, data_loader=self.train_loader,
                                            mask_opt=mask_optimizer, noise_opt=noise_optimizer)
         self.mask_scores = get_mask_scores(self.local_model.state_dict())
         save_mask_scores(self.local_model.state_dict(), f'save/mask_values_{self.client_id}.txt')
