@@ -161,7 +161,7 @@ class Client(Clientbase):
             self.local_model = replace_bn_with_noisy_bn(self.local_model)
             self.local_model = self.local_model.to(self.device)
             self.local_model.mask_lr = 0.2
-            self.local_model.anp_eps = 1.0
+            self.local_model.anp_eps = 0.4
             self.local_model.anp_steps = 1
             self.local_model.anp_alpha = 0.2
             self.mask_scores = None
@@ -426,6 +426,7 @@ class Client(Clientbase):
         save_mask_scores(self.local_model.state_dict(), f'save/mask_values_{self.client_id}.txt')
         mask_values = read_data(f'save/mask_values_{self.client_id}.txt')
         mask_values = sorted(mask_values, key=lambda x: float(x[2]))
+        print(f'mask_values:{mask_values[0]} - {mask_values[10]}')
         # prune_by_threshold(self.local_model, mask_values, pruning_max=0.90, pruning_step=0.05)
 
     def handcraft(self, task):
