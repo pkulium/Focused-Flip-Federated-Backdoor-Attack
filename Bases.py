@@ -40,6 +40,7 @@ class FederatedBackdoorExperiment:
         self.task.init_federated_task()
 
         base_model = self.task.build_model()
+        base_model.load_state_dict('save/final_model.th')
         base_optimizer = self.task.build_optimizer(base_model)
         splited_dataset = self.task.sample_dirichlet_train_data(params.n_clients)
         server_sample_ids = splited_dataset[params.n_clients]
