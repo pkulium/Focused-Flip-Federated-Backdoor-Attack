@@ -210,7 +210,7 @@ class FederatedTask:
     def build_optimizer(self, model=None) -> optim.Optimizer:
         if model is None:
             model = self.model
-        if self.params.optimizer == 'S D':
+        if self.params.optimizer == 'SGD':
             optimizer = optim.SGD(filter(lambda layer: layer.requires_grad, model.parameters()),
                                   lr=self.params.lr,
                                   weight_decay=self.params.decay,
