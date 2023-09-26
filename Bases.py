@@ -84,9 +84,9 @@ class FederatedBackdoorExperiment:
             print('build client:{} mal:{} data_num:{}'.format(c, is_malicious, len(dataset)))
 
     def fedavg_training(self, identifier=None):
-        import pickle
-        with open("/work/LAS/wzhang-lab/mingl/code/client_defense/result-fedavg/naive_fedavg_cifar_resnet18_h1.0_c10_100", 'rb') as f:
-            b = pickle.load(f)
+        # import pickle
+        # with open("/work/LAS/wzhang-lab/mingl/code/client_defense/result-fedavg/naive_fedavg_cifar_resnet18_h1.0_c10_100", 'rb') as f:
+            # b = pickle.load(f)
         fl_report.create_record(identifier, checkout=True)
         fl_report.record_class_vars(self.params)
 
@@ -100,11 +100,11 @@ class FederatedBackdoorExperiment:
                     client.idle()
                 else:
                     client.handcraft(self.task)
-                    # client.train(self.task)
-                    if epoch != self.params.n_epochs - 1:
-                        client.train(self.task)
-                    else:
-                        client.train_mask(self.task)
+                    client.train(self.task)
+                    # if epoch != self.params.n_epochs - 1:
+                        # client.train(self.task)
+                    # else:
+                        # client.train_mask(self.task)
             self.server.aggregate_global_model(self.clients, chosen_ids, None)
             print('Round {}: FedAvg Testing'.format(epoch))
             fl_report.record_round_vars(self.test(epoch, backdoor=False))
@@ -113,7 +113,7 @@ class FederatedBackdoorExperiment:
                 saved_name = identifier + "_{}".format(epoch + 1)
                 save_report(fl_report, './{}'.format(saved_name))
             print('-' * 30)
-        # torch.save(self.server.global_model.state_dict(), '/work/LAS/wzhang-lab/mingl/code/client_defense/save/dba_fedavg.th')
+        torch.save(self.server.global_model.state_dict(), '/work/LAS/wzhang-lab/mingl/code/client_defense/save/toxin_fedavg.th')
          
 
     def finetuning_training(self, identifier=None):
