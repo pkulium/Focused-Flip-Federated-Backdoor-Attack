@@ -85,7 +85,7 @@ class FederatedBackdoorExperiment:
 
     def fedavg_training(self, identifier=None):
         import pickle
-        with open("/work/LAS/wzhang-lab/mingl/code/client_defense/result-fedavg/dba_fedavg_cifar_resnet18_h1.0_c20_100", 'rb') as f:
+        with open("/work/LAS/wzhang-lab/mingl/code/client_defense/result-fedavg/naive_fedavg_cifar_resnet18_h1.0_c10_100", 'rb') as f:
             b = pickle.load(f)
         fl_report.create_record(identifier, checkout=True)
         fl_report.record_class_vars(self.params)
@@ -100,6 +100,7 @@ class FederatedBackdoorExperiment:
                     client.idle()
                 else:
                     client.handcraft(self.task)
+                    # client.train(self.task)
                     if epoch != self.params.n_epochs - 1:
                         client.train(self.task)
                     else:
@@ -112,7 +113,7 @@ class FederatedBackdoorExperiment:
                 saved_name = identifier + "_{}".format(epoch + 1)
                 save_report(fl_report, './{}'.format(saved_name))
             print('-' * 30)
-        # torch.save(self.server.global_model.state_dict(), '/work/LAS/wzhang-lab/mingl/code/client_defense/save/final_model.th')
+        # torch.save(self.server.global_model.state_dict(), '/work/LAS/wzhang-lab/mingl/code/client_defense/save/dba_fedavg.th')
          
 
     def finetuning_training(self, identifier=None):
