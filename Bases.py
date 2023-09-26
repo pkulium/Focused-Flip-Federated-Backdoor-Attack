@@ -85,7 +85,7 @@ class FederatedBackdoorExperiment:
 
     def fedavg_training(self, identifier=None):
         import pickle
-        with open("/work/LAS/wzhang-lab/mingl/code/client_defense/result-fedavgdba_fedavg_cifar_resnet18_h1.0_c20_100", 'rb') as f:
+        with open("/work/LAS/wzhang-lab/mingl/code/client_defense/result-fedavg/dba_fedavg_cifar_resnet18_h1.0_c20_100", 'rb') as f:
             b = pickle.load(f)
         fl_report.create_record(identifier, checkout=True)
         fl_report.record_class_vars(self.params)
