@@ -460,6 +460,7 @@ class Cifar10FederatedTask(FederatedTask):
             else:
                 model = resnet18(pretrained=False, num_classes=len(self.classes), norm_layer=NoisyBatchNorm2d)
                 print("resnet18")
+                
             return model
         elif self.params.model == 'simple':
             if self.params.pretrained:
