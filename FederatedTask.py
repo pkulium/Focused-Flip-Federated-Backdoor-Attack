@@ -458,9 +458,9 @@ class Cifar10FederatedTask(FederatedTask):
                 # model is pretrained on ImageNet changing classes to CIFAR
                 model.fc = nn.Linear(512, len(self.classes))
             else:
-                model = resnet18(pretrained=False, num_classes=len(self.classes), norm_layer=NoisyBatchNorm2d)
+                # model = resnet18(pretrained=False, num_classes=len(self.classes), norm_layer=NoisyBatchNorm2d)
+                model = resnet18(pretrained=False, num_classes=len(self.classes))
                 print("resnet18")
-                
             return model
         elif self.params.model == 'simple':
             if self.params.pretrained:
