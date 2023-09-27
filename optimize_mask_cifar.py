@@ -170,8 +170,8 @@ def reset(model, rand_init):
 
 
 def mask_train(model, criterion, mask_opt, noise_opt, data_loader):
-    model = model.local_model
     is_malicious = model.is_malicious
+    model = model.local_model
     model.train()
     total_correct = 0
     total_loss = 0.0
