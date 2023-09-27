@@ -41,7 +41,7 @@ class FederatedBackdoorExperiment:
 
         base_model = self.task.build_model()
 
-        base_model.load_state_dict(torch.load('save/final_model.th'))
+        # base_model.load_state_dict(torch.load('save/final_model.th'))
         base_optimizer = self.task.build_optimizer(base_model)
         splited_dataset = self.task.sample_dirichlet_train_data(params.n_clients)
         server_sample_ids = splited_dataset[params.n_clients]
@@ -97,11 +97,11 @@ class FederatedBackdoorExperiment:
                     client.idle()
                 else:
                     client.handcraft(self.task)
-                    # client.train(self.task)
-                    if epoch != self.params.n_epochs - 1:
-                        client.train(self.task)
-                    else:
-                        client.train_mask(self.task)
+                    client.train(self.task)
+                    # if epoch != self.params.n_epochs - 1:
+                    #     client.train(self.task)
+                    # else:
+                    #     client.train_mask(self.task)
             self.server.aggregate_global_model(self.clients, chosen_ids, None)
             print('Round {}: FedAvg Testing'.format(epoch))
             fl_report.record_round_vars(self.test(epoch, backdoor=False))
@@ -110,7 +110,7 @@ class FederatedBackdoorExperiment:
                 saved_name = identifier + "_{}".format(epoch + 1)
                 save_report(fl_report, './{}'.format(saved_name))
             print('-' * 30)
-        # torch.save(self.server.global_model.state_dict(), '/work/LAS/wzhang-lab/mingl/code/client_defense/save/toxin_fedavg.th')
+        torch.save(self.server.global_model.state_dict(), '/work/LAS/wzhang-lab/mingl/code/client_defense/save/toxin_fedavg.th')
          
 
     def finetuning_training(self, identifier=None):
