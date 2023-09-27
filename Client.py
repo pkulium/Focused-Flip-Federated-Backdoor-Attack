@@ -157,14 +157,14 @@ class Client(Clientbase):
             self.attacks.previous_global_model = copy.deepcopy(model)
 
         self.criterion = nn.CrossEntropyLoss(reduction='none')
-        if not self.is_malicious:
-            self.local_model = replace_bn_with_noisy_bn(self.local_model)
-            self.local_model = self.local_model.to(self.device)
-            self.local_model.mask_lr = 0.2
-            self.local_model.anp_eps = 0.4
-            self.local_model.anp_steps = 1
-            self.local_model.anp_alpha = 0.2
-            self.mask_scores = None
+
+        self.local_model = replace_bn_with_noisy_bn(self.local_model)
+        self.local_model = self.local_model.to(self.device)
+        self.local_model.mask_lr = 0.2
+        self.local_model.anp_eps = 0.4
+        self.local_model.anp_steps = 1
+        self.local_model.anp_alpha = 0.2
+        self.mask_scores = None
 
     def reset_loader(self):
         batch_size = self.handcraft_loader.batch_size
@@ -411,17 +411,17 @@ class Client(Clientbase):
         self.scheduler.step()
     
     def train_mask(self, task):
-        if self.is_malicious:
-            self.train(task)
-            return
+        # if self.is_malicious:
+        #     self.train(task)
+        #     return
         criterion = torch.nn.CrossEntropyLoss().to(self.device)
         parameters = list(self.local_model.named_parameters())
         mask_params = [v for n, v in parameters if "neuron_mask" in n]
         mask_optimizer = torch.optim.SGD(mask_params, lr=self.local_model.mask_lr, momentum=0.9)
         noise_params = [v for n, v in parameters if "neuron_noise" in n]
         noise_optimizer = torch.optim.SGD(noise_params, lr=self.local_model.anp_eps / self.local_model.anp_steps)
-        for epoch in range(10):
-            train_loss, train_acc = mask_train(model=self.local_model, criterion=criterion, data_loader=self.train_loader,
+        for epoch in range(5):
+            train_loss, train_acc = mask_train(model=self, criterion=criterion, data_loader=self.train_loader,
                                            mask_opt=mask_optimizer, noise_opt=noise_optimizer)
         self.mask_scores = get_mask_scores(self.local_model.state_dict())
         save_mask_scores(self.local_model.state_dict(), f'save/mask_values_{self.client_id}.txt')
