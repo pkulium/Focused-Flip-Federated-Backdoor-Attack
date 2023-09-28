@@ -292,6 +292,7 @@ class Client(Clientbase):
         k_layer = 0
         
         for _, params in model.named_parameters():
+            print(f'name:{_}')
             if params.requires_grad:
                 grad_list.append(params.grad.abs().view(-1))
                 grad_abs_sum_list.append(params.grad.abs().view(-1).sum().item())
