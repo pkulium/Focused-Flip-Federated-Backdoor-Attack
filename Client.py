@@ -292,7 +292,8 @@ class Client(Clientbase):
         k_layer = 0
         
         for _, params in model.named_parameters():
-            print(f'name:{_}')
+            if 'neuron' in _:
+                continue 
             if params.requires_grad:
                 grad_list.append(params.grad.abs().view(-1))
                 grad_abs_sum_list.append(params.grad.abs().view(-1).sum().item())
@@ -309,6 +310,8 @@ class Client(Clientbase):
         k_layer = 0
         grad_abs_percentage_list = []
         for _, parms in model.named_parameters():
+            if 'neuron' in _:
+                continue
             if parms.requires_grad:
                 gradients_length = len(parms.grad.abs().view(-1))
 
@@ -328,6 +331,8 @@ class Client(Clientbase):
     def apply_grad_mask(self, model, mask_grad_list):
         mask_grad_list_copy = iter(mask_grad_list)
         for name, parms in model.named_parameters():
+            if 'neuron' in name:
+                continue
             if parms.requires_grad:
                 parms.grad = parms.grad * next(mask_grad_list_copy)
 
