@@ -120,7 +120,7 @@ class Params:
     
     #server_dataset
     server_dataset = False
-    resultdir = 'result-fedavg'
+    resultdir = 'result-feddf'
 
     def __post_init__(self):
         # enable logging anyways when saving statistics
