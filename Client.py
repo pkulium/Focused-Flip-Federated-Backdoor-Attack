@@ -357,8 +357,8 @@ class Client(Clientbase):
                 self.optimizer.zero_grad()
                 loss = self.compute_blind_loss(model, batch, does_attack=True)
                 # if self.is_malicious:
-                    # sim_factor = self.attacks.params.model_similarity_factor
-                    # loss = (1-sim_factor) * loss + sim_factor * model_similarity_loss(raw_model, model)
+                #     sim_factor = self.attacks.params.model_similarity_factor
+                #     loss = (1-sim_factor) * loss + sim_factor * model_similarity_loss(raw_model, model)
                 
                 
                 loss.backward(retain_graph=True)
