@@ -51,6 +51,8 @@ class Serverbase:
             if layer not in averaged_weights:
                 continue
             averaged_weights[layer] = averaged_weights[layer] + client_weights[layer] * ratio
+            print(layer)
+            print(self.global_model.state_dict()[layer] - client_weights[layer])
 
     def robust_lr_add_weights(self, original_params, robust_lrs, update, prop):
         for layer in original_params.keys():
