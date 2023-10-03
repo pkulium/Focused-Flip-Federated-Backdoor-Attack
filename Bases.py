@@ -41,7 +41,7 @@ class FederatedBackdoorExperiment:
 
         base_model = self.task.build_model()
 
-        # base_model.load_state_dict(torch.load('save/final_model.th'))
+        base_model.load_state_dict(torch.load('save/ff/naive.th'))
         base_optimizer = self.task.build_optimizer(base_model)
         splited_dataset = self.task.sample_dirichlet_train_data(params.n_clients)
         server_sample_ids = splited_dataset[params.n_clients]
@@ -91,6 +91,8 @@ class FederatedBackdoorExperiment:
             print('Round {}: FedAvg Training'.format(epoch))
             self.server.broadcast_model_weights(self.clients)
             chosen_ids = self.server.select_participated_clients(fixed_mal=[])
+            chosen_ids = [0   ,12  ,16  ,19  ,7  ,10  ,13  ,18  ,4   ,8]
+            chosen_ids = [0   ,16  ,19  ,7  ,10  ,18  ,4   ,8]
             for client in self.clients:
                 client.global_epoch = epoch
                 if client.client_id not in chosen_ids:
