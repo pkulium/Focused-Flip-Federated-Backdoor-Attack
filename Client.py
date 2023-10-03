@@ -420,22 +420,22 @@ class Client(Clientbase):
         # if self.is_malicious:
         #     self.train(task)
         #     return
-        # criterion = torch.nn.CrossEntropyLoss().to(self.device)
-        # parameters = list(self.local_model.named_parameters())
-        # mask_params = [v for n, v in parameters if "neuron_mask" in n]
-        # mask_optimizer = torch.optim.SGD(mask_params, lr=self.local_model.mask_lr, momentum=0.9)
-        # noise_params = [v for n, v in parameters if "neuron_noise" in n]
-        # noise_optimizer = torch.optim.SGD(noise_params, lr=self.local_model.anp_eps / self.local_model.anp_steps)
-        # for epoch in range(5):
-        #     train_loss, train_acc = mask_train(model=self, criterion=criterion, data_loader=self.train_loader,
-        #                                    mask_opt=mask_optimizer, noise_opt=noise_optimizer)
-        # self.mask_scores = get_mask_scores(self.local_model.state_dict())
-        # save_mask_scores(self.local_model.state_dict(), f'save/mask_values_{self.client_id}_{self.is_malicious}.txt')
-        # mask_values = read_data(f'save/ff/mask_values_{self.client_id}_{self.is_malicious}.txt') in ids:
+        criterion = torch.nn.CrossEntropyLoss().to(self.device)
+        parameters = list(self.local_model.named_parameters())
+        mask_params = [v for n, v in parameters if "neuron_mask" in n]
+        mask_optimizer = torch.optim.SGD(mask_params, lr=self.local_model.mask_lr, momentum=0.9)
+        noise_params = [v for n, v in parameters if "neuron_noise" in n]
+        noise_optimizer = torch.optim.SGD(noise_params, lr=self.local_model.anp_eps / self.local_model.anp_steps)
+        for epoch in range(5):
+            train_loss, train_acc = mask_train(model=self, criterion=criterion, data_loader=self.train_loader,
+                                           mask_opt=mask_optimizer, noise_opt=noise_optimizer)
+        self.mask_scores = get_mask_scores(self.local_model.state_dict())
+        save_mask_scores(self.local_model.state_dict(), f'save/mask_values_{self.client_id}_{self.is_malicious}.txt')
+        mask_values = read_data(f'save/ff/mask_values_{self.client_id}_{self.is_malicious}.txt') in ids:
         mask_values = read_data(f'save/ff/mask_values_{self.client_id}.txt')
         mask_values = sorted(mask_values, key=lambda x: float(x[2]))
         print(f'mask_values:{mask_values[0]} - {mask_values[10]}')
-        prune_by_threshold(self.local_model, mask_values, pruning_max=0.7, pruning_step=0.05)
+        prune_by_threshold(self.local_model, mask_values, pruning_max=0.5, pruning_step=0.05)
 
     def handcraft(self, task):
         self.handcraft_rnd = self.handcraft_rnd + 1
