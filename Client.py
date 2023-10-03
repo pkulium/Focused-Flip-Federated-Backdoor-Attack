@@ -109,8 +109,8 @@ class Clientbase:
         model_weights = model.state_dict()
         client_weights = self.local_model.state_dict()
         for layer in model_weights.keys():
-            if not is_bn_relavent(layer):
-                client_weights[layer] = model_weights[layer].clone().detach()
+            # if not is_bn_relavent(layer):
+            client_weights[layer] = model_weights[layer].clone().detach()
         self.local_model.load_state_dict(client_weights)
 
     def freeze_model_layers(self, freezing_max_id):
