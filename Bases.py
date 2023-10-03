@@ -93,7 +93,7 @@ class FederatedBackdoorExperiment:
             chosen_ids = self.server.select_participated_clients(fixed_mal=[])
             chosen_ids = [0   ,12  ,16  ,19  ,7  ,10  ,13  ,18  ,4   ,8]
             chosen_ids = [0   ,16  ,19  ,7  ,10  ,18  ,4   ,8]
-            chosen_ids = []
+            chosen_ids = [0]
             for client in self.clients:
                 client.global_epoch = epoch
                 if client.client_id not in chosen_ids:
