@@ -101,4 +101,4 @@ def load_report(path):
 import pickle
 with open("/work/LAS/wzhang-lab/mingl/code/client_defense/result-fedavg/dba_fedavg_cifar_resnet18_h1.0_c20_100", 'rb') as f:
     b = pickle.load(f)
-print(b)
+print(b.all_records)
