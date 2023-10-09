@@ -117,8 +117,9 @@ def plot_and_save_report(report_path, save_path):
     for record in report.all_records:
         for round_num, values in record.rounds.items():
             rounds.append(round_num)
-            accs.append(sum(values['acc']) / len(values['acc']))  # Assuming you want the average accuracy for each round
-            asrs.append(sum(values['asr']) / len(values['asr']))  # Assuming you want the average ASR for each round
+            accs.append(sum([x['value'] for x in values['acc']]) / len(values['acc']))
+            asrs.append(sum([x['value'] for x in values['asr']]) / len(values['asr']))
+
 
     # Plotting
     plt.figure(figsize=(10, 6))
