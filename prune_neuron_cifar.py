@@ -155,7 +155,7 @@ def evaluate_by_threshold(model, mask_values, pruning_max, pruning_step, criteri
 
 def prune_by_threshold(model, mask_values, pruning_max, pruning_step):
     thresholds = np.arange(0, pruning_max + pruning_step, pruning_step)
-    start = 0
+    start = 1000
     for threshold in thresholds:
         idx = start
         for idx in range(start, len(mask_values)):
