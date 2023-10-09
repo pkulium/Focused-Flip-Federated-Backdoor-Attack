@@ -102,3 +102,35 @@ import pickle
 with open("/work/LAS/wzhang-lab/mingl/code/client_defense/result-fedavg/ff_fedavg_cifar_resnet18_h1.0_c20_100", 'rb') as f:
     b = pickle.load(f)
 print(b.all_records)
+
+import matplotlib.pyplot as plt
+
+def plot_and_save_report(report_path, save_path):
+    # Load the report
+    report = load_report(report_path)
+
+    # Extract data for plotting
+    rounds = []
+    accs = []
+    asrs = []
+
+    for record in report.all_records:
+        for round_num, values in record.rounds.items():
+            rounds.append(round_num)
+            accs.append(sum(values['acc']) / len(values['acc']))  # Assuming you want the average accuracy for each round
+            asrs.append(sum(values['asr']) / len(values['asr']))  # Assuming you want the average ASR for each round
+
+    # Plotting
+    plt.figure(figsize=(10, 6))
+    plt.plot(rounds, accs, label='Training Accuracy', marker='o')
+    plt.plot(rounds, asrs, label='Attack Success Rate', marker='x')
+    plt.xlabel('Rounds')
+    plt.ylabel('Value')
+    plt.title('Training Accuracy and ASR vs. Rounds')
+    plt.legend()
+    plt.grid(True)
+    plt.savefig(save_path, format='png')  # Save the plot to the specified path
+    plt.close()
+
+# Example usage:
+plot_and_save_report("/work/LAS/wzhang-lab/mingl/code/client_defense/result-fedavg/ff_fedavg_cifar_resnet18_h1.0_c20_100", "/work/LAS/wzhang-lab/mingl/code/client_defense/result-fedavg/ff_fedavg_cifar_resnet18_h1.0_c20_100.png")
