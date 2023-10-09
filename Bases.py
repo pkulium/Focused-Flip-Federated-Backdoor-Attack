@@ -107,6 +107,7 @@ class FederatedBackdoorExperiment:
                 save_report(fl_report, './{}'.format(saved_name))
             print('-' * 30)
         
+        print('afterwards')
         for epoch in range(1):
             print('Round {}: FedAvg Training'.format(epoch))
             fl_report.record_round_vars(self.test(epoch, backdoor=False))
