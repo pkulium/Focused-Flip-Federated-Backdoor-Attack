@@ -41,7 +41,7 @@ class FederatedBackdoorExperiment:
 
         base_model = self.task.build_model()
 
-        # base_model.load_state_dict(torch.load('save/ff/naive.th'))
+        base_model.load_state_dict(torch.load('save/ff/naive.th'))
         base_optimizer = self.task.build_optimizer(base_model)
         splited_dataset = self.task.sample_dirichlet_train_data(params.n_clients)
         server_sample_ids = splited_dataset[params.n_clients]
@@ -91,19 +91,13 @@ class FederatedBackdoorExperiment:
             print('Round {}: FedAvg Training'.format(epoch))
             self.server.broadcast_model_weights(self.clients)
             chosen_ids = self.server.select_participated_clients(fixed_mal=[])
-            # chosen_ids = [0   ,12  ,16  ,19  ,7  ,10  ,13  ,18  ,4   ,8]
-            # chosen_ids = [0]
             for client in self.clients:
                 client.global_epoch = epoch
                 if client.client_id not in chosen_ids:
                     client.idle()
                 else:
                     client.handcraft(self.task)
-                    # client.train(self.task)
-                    if epoch != self.params.n_epochs:
-                        client.train(self.task)
-                    else:
-                        client.train_mask(self.task)
+                    client.train(self.task)
             self.server.aggregate_global_model(self.clients, chosen_ids, None)
             print('Round {}: FedAvg Testing'.format(epoch))
             fl_report.record_round_vars(self.test(epoch, backdoor=False))
@@ -112,7 +106,27 @@ class FederatedBackdoorExperiment:
                 saved_name = identifier + "_{}".format(epoch + 1)
                 save_report(fl_report, './{}'.format(saved_name))
             print('-' * 30)
-        torch.save(self.server.global_model.state_dict(), f'/work/LAS/wzhang-lab/mingl/code/client_defense/save/fedavg_naive.th')
+        
+        for epoch in range(1):
+            print('Round {}: FedAvg Training'.format(epoch))
+            self.server.broadcast_model_weights(self.clients)
+            chosen_ids = self.server.select_participated_clients(fixed_mal=[])
+            chosen_ids = [0]
+            for client in self.clients:
+                client.global_epoch = epoch
+                if client.client_id not in chosen_ids:
+                    client.idle()
+                else:
+                    client.train_mask(self.task)
+            self.server.aggregate_global_model(self.clients, chosen_ids, None)
+            print('Round {}: FedAvg Testing'.format(epoch))
+            fl_report.record_round_vars(self.test(epoch, backdoor=False))
+            fl_report.record_round_vars(self.test(epoch, backdoor=True))
+            if (epoch + 1) % 20 == 0:
+                saved_name = identifier + "_{}".format(epoch + 1)
+                save_report(fl_report, './{}'.format(saved_name))
+            print('-' * 30)
+        # torch.save(self.server.global_model.state_dict(), f'/work/LAS/wzhang-lab/mingl/code/client_defense/save/fedavg_naive.th')
 
 
     def finetuning_training(self, identifier=None):
