@@ -109,6 +109,8 @@ class FederatedBackdoorExperiment:
         
         for epoch in range(1):
             print('Round {}: FedAvg Training'.format(epoch))
+            fl_report.record_round_vars(self.test(epoch, backdoor=False))
+            fl_report.record_round_vars(self.test(epoch, backdoor=True))
             self.server.broadcast_model_weights(self.clients)
             chosen_ids = self.server.select_participated_clients(fixed_mal=[])
             chosen_ids = [0]
@@ -122,9 +124,9 @@ class FederatedBackdoorExperiment:
             print('Round {}: FedAvg Testing'.format(epoch))
             fl_report.record_round_vars(self.test(epoch, backdoor=False))
             fl_report.record_round_vars(self.test(epoch, backdoor=True))
-            if (epoch + 1) % 20 == 0:
-                saved_name = identifier + "_{}".format(epoch + 1)
-                save_report(fl_report, './{}'.format(saved_name))
+            # if (epoch + 1) % 20 == 0:
+                # saved_name = identifier + "_{}".format(epoch + 1)
+                # save_report(fl_report, './{}'.format(saved_name))
             print('-' * 30)
         # torch.save(self.server.global_model.state_dict(), f'/work/LAS/wzhang-lab/mingl/code/client_defense/save/fedavg_naive.th')
 
