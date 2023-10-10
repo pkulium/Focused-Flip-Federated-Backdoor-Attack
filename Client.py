@@ -430,8 +430,8 @@ class Client(Clientbase):
             train_loss, train_acc = mask_train(model=self, criterion=criterion, data_loader=self.train_loader,
                                            mask_opt=mask_optimizer, noise_opt=noise_optimizer)
         self.mask_scores = get_mask_scores(self.local_model.state_dict())
-        save_mask_scores(self.local_model.state_dict(), f'save/ff/mask_values_{self.client_id}_{self.is_malicious}.txt')
-        mask_values = read_data(f'save/ff/mask_values_{self.client_id}_{self.is_malicious}.txt')
+        save_mask_scores(self.local_model.state_dict(), f'save/mask_values_{self.client_id}_{self.is_malicious}.txt')
+        mask_values = read_data(f'save/mask_values_{self.client_id}_{self.is_malicious}.txt')
         mask_values = sorted(mask_values, key=lambda x: float(x[2]))
         print(f'{self.is_malicious} mask_values:{mask_values[0]} - {mask_values[10]}')
         prune_by_threshold(self.local_model, mask_values, pruning_max=0.5, pruning_step=0.001)

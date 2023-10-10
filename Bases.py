@@ -41,7 +41,7 @@ class FederatedBackdoorExperiment:
 
         base_model = self.task.build_model()
 
-        # base_model.load_state_dict(torch.load('save/ff/naive.th'))
+        base_model.load_state_dict(torch.load(f'/work/LAS/wzhang-lab/mingl/code/client_defense/save/{args.model}_{args.backdoor}_{args.defense}.pth'))
         base_optimizer = self.task.build_optimizer(base_model)
         splited_dataset = self.task.sample_dirichlet_train_data(params.n_clients)
         server_sample_ids = splited_dataset[params.n_clients]
@@ -107,17 +107,18 @@ class FederatedBackdoorExperiment:
                 saved_name = identifier + "_{}".format(epoch + 1)
                 save_report(fl_report, './{}'.format(saved_name))
             print('-' * 30)
-        torch.save(self.server.global_model.state_dict(), f'/work/LAS/wzhang-lab/mingl/code/client_defense/save/{args.model}_{args.backdoor}_{args.defense}.pth')
-
-        
-        print('afterwards')
-        for epoch in range(0):
+        # torch.save(self.server.global_model.state_dict(), f'/work/LAS/wzhang-lab/mingl/code/client_defense/save/{args.model}_{args.backdoor}_{args.defense}.pth')
+        print('before')
+        fl_report.record_round_vars(self.test(0, backdoor=False))
+        fl_report.record_round_vars(self.test(0, backdoor=True))
+        print('after')
+        for epoch in range(1):
             print('Round {}: FedAvg Training'.format(epoch))
             fl_report.record_round_vars(self.test(epoch, backdoor=False))
             fl_report.record_round_vars(self.test(epoch, backdoor=True))
             self.server.broadcast_model_weights(self.clients)
             chosen_ids = self.server.select_participated_clients(fixed_mal=[])
-            chosen_ids = []
+            chosen_ids = [self.server.n_clients - 1]
             for client in self.clients:
                 client.global_epoch = epoch
                 if client.client_id not in chosen_ids:
@@ -128,9 +129,6 @@ class FederatedBackdoorExperiment:
             print('Round {}: FedAvg Testing'.format(epoch))
             fl_report.record_round_vars(self.test(epoch, backdoor=False))
             fl_report.record_round_vars(self.test(epoch, backdoor=True))
-            # if (epoch + 1) % 20 == 0:
-                # saved_name = identifier + "_{}".format(epoch + 1)
-                # save_report(fl_report, './{}'.format(saved_name))
             print('-' * 30)
 
 
