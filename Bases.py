@@ -41,7 +41,7 @@ class FederatedBackdoorExperiment:
 
         base_model = self.task.build_model()
 
-        base_model.load_state_dict(torch.load('save/ff/naive.th'))
+        # base_model.load_state_dict(torch.load('save/ff/naive.th'))
         base_optimizer = self.task.build_optimizer(base_model)
         splited_dataset = self.task.sample_dirichlet_train_data(params.n_clients)
         server_sample_ids = splited_dataset[params.n_clients]
@@ -109,13 +109,13 @@ class FederatedBackdoorExperiment:
             print('-' * 30)
         
         print('afterwards')
-        for epoch in range(1):
+        for epoch in range(0):
             print('Round {}: FedAvg Training'.format(epoch))
             fl_report.record_round_vars(self.test(epoch, backdoor=False))
             fl_report.record_round_vars(self.test(epoch, backdoor=True))
             self.server.broadcast_model_weights(self.clients)
             chosen_ids = self.server.select_participated_clients(fixed_mal=[])
-            chosen_ids = [self.server.n_clients - i for i in range(1, 6)]
+            chosen_ids = []
             for client in self.clients:
                 client.global_epoch = epoch
                 if client.client_id not in chosen_ids:
@@ -130,7 +130,7 @@ class FederatedBackdoorExperiment:
                 # saved_name = identifier + "_{}".format(epoch + 1)
                 # save_report(fl_report, './{}'.format(saved_name))
             print('-' * 30)
-        # torch.save(self.server.global_model.state_dict(), f'/work/LAS/wzhang-lab/mingl/code/client_defense/save/fedavg_naive.th')
+        torch.save(self.server.global_model.state_dict(), f'/work/LAS/wzhang-lab/mingl/code/client_defense/save/')
 
 
     def finetuning_training(self, identifier=None):
