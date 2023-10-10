@@ -60,7 +60,8 @@ class FederatedBackdoorExperiment:
         self.attacks = Attacks(params, self.synthesizer)
 
         self.clients = list()
-        malicious_ids = np.random.choice(range(params.n_clients), params.n_malicious_client, replace=False)
+        # malicious_ids = np.random.choice(range(params.n_clients), params.n_malicious_client, replace=False)
+        malicious_ids = np.arange(0, params.n_malicious_client, dtype=int)
         self.malicious_ids = malicious_ids
         i_mal = 0
 
