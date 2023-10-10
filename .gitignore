@@ -1,0 +1,4 @@
+*.xml
+*.pyc
+save/*
+result-fedavg/*
