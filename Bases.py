@@ -107,6 +107,8 @@ class FederatedBackdoorExperiment:
                 saved_name = identifier + "_{}".format(epoch + 1)
                 save_report(fl_report, './{}'.format(saved_name))
             print('-' * 30)
+        torch.save(self.server.global_model.state_dict(), f'/work/LAS/wzhang-lab/mingl/code/client_defense/save/')
+
         
         print('afterwards')
         for epoch in range(0):
@@ -130,7 +132,6 @@ class FederatedBackdoorExperiment:
                 # saved_name = identifier + "_{}".format(epoch + 1)
                 # save_report(fl_report, './{}'.format(saved_name))
             print('-' * 30)
-        torch.save(self.server.global_model.state_dict(), f'/work/LAS/wzhang-lab/mingl/code/client_defense/save/')
 
 
     def finetuning_training(self, identifier=None):
