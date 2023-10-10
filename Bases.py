@@ -108,12 +108,8 @@ class FederatedBackdoorExperiment:
                 save_report(fl_report, './{}'.format(saved_name))
             print('-' * 30)
         # torch.save(self.server.global_model.state_dict(), f'/work/LAS/wzhang-lab/mingl/code/client_defense/save/{args.model}_{args.backdoor}_{args.defense}.pth')
-        print('before')
-        fl_report.record_round_vars(self.test(0, backdoor=False))
-        fl_report.record_round_vars(self.test(0, backdoor=True))
-        print('after')
+        print('post training')
         for epoch in range(1):
-            print('Round {}: FedAvg Training'.format(epoch))
             fl_report.record_round_vars(self.test(epoch, backdoor=False))
             fl_report.record_round_vars(self.test(epoch, backdoor=True))
             self.server.broadcast_model_weights(self.clients)
