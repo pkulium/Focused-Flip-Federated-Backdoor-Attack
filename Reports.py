@@ -99,7 +99,7 @@ def load_report(path):
 
 
 import pickle
-with open("/work/LAS/wzhang-lab/mingl/code/client_defense/result-fedavg/neurotoxin_fedavg_cifar_resnet18_h1.0_c20_100", 'rb') as f:
+with open("./result-fedavg/neurotoxin_fedavg_cifar_resnet18_h1.0_c20_100", 'rb') as f:
     b = pickle.load(f)
 print(b.all_records)
 
@@ -119,6 +119,9 @@ def plot_and_save_report(report_path, save_path):
             rounds.append(round_num)    
             accs.append(values['acc'][0]['Top-1'])
             asrs.append(values['asr'][0]['Top-1'])
+    # accs = accs[:-1]
+    # asrs = asrs[:-1]
+    # rounds = rounds[:-1]
 
     # Plotting
     plt.figure(figsize=(10, 6))
@@ -133,4 +136,4 @@ def plot_and_save_report(report_path, save_path):
     plt.close()
 
 # Example usage:
-plot_and_save_report("/work/LAS/wzhang-lab/mingl/code/client_defense/result-fedavg/neurotoxin_fedavg_cifar_resnet18_h1.0_c20_100", "/work/LAS/wzhang-lab/mingl/code/client_defense/result-fedavg/neurotoxin_fedavg_cifar_resnet18_h1.0_c20_100.png")
+plot_and_save_report("./result-fedavg-origin/dba_fedavg_cifar_resnet18_h1.0_c20_100", "./result-fedavg-origin/test.png")
