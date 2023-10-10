@@ -154,16 +154,22 @@ def evaluate_by_threshold(model, mask_values, pruning_max, pruning_step, criteri
 
 
 def prune_by_threshold(model, mask_values, pruning_max, pruning_step):
-    thresholds = np.arange(0, pruning_max + pruning_step, pruning_step)
-    start = 1000
-    for threshold in thresholds:
-        idx = start
-        for idx in range(start, len(mask_values)):
-            if float(mask_values[idx][2]) <= threshold:
-                pruning(model, mask_values[idx])
-                start += 1
-            else:
-                break
+    # thresholds = np.arange(0, pruning_max + pruning_step, pruning_step)
+    # start = 1000
+    # for threshold in thresholds:
+    #     idx = start
+    #     for idx in range(start, len(mask_values)):
+    #         if float(mask_values[idx][2]) <= threshold:
+    #             pruning(model, mask_values[idx])
+    #             start += 1
+    #         else:
+    #             break
+    for idx in range(0, len(mask_values)):
+        if float(mask_values[idx][2]) <= pruning_max:
+            pruning(model, mask_values[idx])
+            start += 1
+        else:
+            break
 
 def test(model, criterion, data_loader):
     model.eval()
