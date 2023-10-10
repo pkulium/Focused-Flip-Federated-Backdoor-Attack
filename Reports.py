@@ -98,10 +98,10 @@ def load_report(path):
         return report
 
 
-import pickle
-with open("./result-fedavg/neurotoxin_fedavg_cifar_resnet18_h1.0_c20_100", 'rb') as f:
-    b = pickle.load(f)
-print(b.all_records)
+# import pickle
+# with open("./result-fedavg/neurotoxin_fedavg_cifar_resnet18_h1.0_c20_100", 'rb') as f:
+#     b = pickle.load(f)
+# print(b.all_records)
 
 import matplotlib.pyplot as plt
 
@@ -136,4 +136,4 @@ def plot_and_save_report(report_path, save_path):
     plt.close()
 
 # Example usage:
-plot_and_save_report("./result-fedavg-origin/dba_fedavg_cifar_resnet18_h1.0_c20_100", "./result-fedavg-origin/test.png")
+# plot_and_save_report("./result-fedavg-origin/dba_fedavg_cifar_resnet18_h1.0_c20_100", "./result-fedavg-origin/test.png")
