@@ -135,5 +135,5 @@ def plot_and_save_report(report_path, save_path):
     plt.savefig(save_path, format='png')  # Save the plot to the specified path
     plt.close()
 
-# Example usage:
-# plot_and_save_report("./result-fedavg-origin/dba_fedavg_cifar_resnet18_h1.0_c20_100", "./result-fedavg-origin/test.png")
+filename = 'dba_fedavg_cifar_simple_h1.0_c20_100'
+plot_and_save_report(f"./{filename}", f"./{filename}.png")
