@@ -420,6 +420,7 @@ class Client(Clientbase):
         # if self.is_malicious:
         #     self.train(task)
         #     return
+        return
         criterion = torch.nn.CrossEntropyLoss().to(self.device)
         parameters = list(self.local_model.named_parameters())
         mask_params = [v for n, v in parameters if "neuron_mask" in n]
