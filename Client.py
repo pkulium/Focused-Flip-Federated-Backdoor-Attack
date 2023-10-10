@@ -420,7 +420,6 @@ class Client(Clientbase):
         # if self.is_malicious:
         #     self.train(task)
         #     return
-        return
         criterion = torch.nn.CrossEntropyLoss().to(self.device)
         parameters = list(self.local_model.named_parameters())
         mask_params = [v for n, v in parameters if "neuron_mask" in n]
@@ -430,6 +429,7 @@ class Client(Clientbase):
         for epoch in range(5):
             train_loss, train_acc = mask_train(model=self, criterion=criterion, data_loader=self.train_loader,
                                            mask_opt=mask_optimizer, noise_opt=noise_optimizer)
+            print(f'epoch:{epoch} train_loss:{train_loss} train_acc:{train_acc}')
         self.mask_scores = get_mask_scores(self.local_model.state_dict())
         save_mask_scores(self.local_model.state_dict(), f'save/mask_values_{self.client_id}_{self.is_malicious}.txt')
         mask_values = read_data(f'save/mask_values_{self.client_id}_{self.is_malicious}.txt')
