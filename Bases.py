@@ -115,7 +115,7 @@ class FederatedBackdoorExperiment:
             fl_report.record_round_vars(self.test(epoch, backdoor=True))
             self.server.broadcast_model_weights(self.clients)
             chosen_ids = self.server.select_participated_clients(fixed_mal=[])
-            chosen_ids = [0]
+            chosen_ids = [self.server.n_clients - 1]
             for client in self.clients:
                 client.global_epoch = epoch
                 if client.client_id not in chosen_ids:
