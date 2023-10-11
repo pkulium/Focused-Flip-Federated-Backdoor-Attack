@@ -122,9 +122,13 @@ class FederatedBackdoorExperiment:
                     client.idle()
                 else:
                     client.train_mask(self.task)
-                    fl_report.record_round_vars(self.test(epoch, backdoor=False, another_model=client.local_model))
-                    fl_report.record_round_vars(self.test(epoch, backdoor=True, another_model=client.local_model))
+                    # fl_report.record_round_vars(self.test(epoch, backdoor=False, another_model=client.local_model))
+                    # fl_report.record_round_vars(self.test(epoch, backdoor=True, another_model=client.local_model))
             self.server.aggregate_global_model(self.clients, chosen_ids, None)
+            from prune_neuron_cifar import read_data, prune_by_threshold
+            mask_values = read_data(f'save/mask_values_{chosen_ids[0]}_False.txt')
+            mask_values = sorted(mask_values, key=lambda x: float(x[2]))
+            prune_by_threshold(self.local_model, mask_values, pruning_max=0.95, pruning_step=0.05)
             fl_report.record_round_vars(self.test(epoch, backdoor=False))
             fl_report.record_round_vars(self.test(epoch, backdoor=True))
             print('-' * 30)
