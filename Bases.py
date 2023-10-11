@@ -42,7 +42,7 @@ class FederatedBackdoorExperiment:
         base_model = self.task.build_model()
 
         base_model.load_state_dict(torch.load(f'/work/LAS/wzhang-lab/mingl/code/client_defense/save/{args.model}_{args.backdoor}_{args.defense}.pth'))
-        # base_model = replace_bn_with_noisy_bn(base_model)
+        base_model = replace_bn_with_noisy_bn(base_model)
         base_optimizer = self.task.build_optimizer(base_model)
         splited_dataset = self.task.sample_dirichlet_train_data(params.n_clients)
         server_sample_ids = splited_dataset[params.n_clients]
@@ -115,20 +115,20 @@ class FederatedBackdoorExperiment:
             fl_report.record_round_vars(self.test(epoch, backdoor=True))
             self.server.broadcast_model_weights(self.clients)
             chosen_ids = self.server.select_participated_clients(fixed_mal=[])
-            chosen_ids = [self.server.n_clients - 1]
+            chosen_ids = [self.server.n_clients - i for i in range(1, 5)]
             for client in self.clients:
                 client.global_epoch = epoch
                 if client.client_id not in chosen_ids:
                     client.idle()
                 else:
                     client.train_mask(self.task)
-                    fl_report.record_round_vars(self.test(epoch, backdoor=False, another_model=client.local_model))
-                    fl_report.record_round_vars(self.test(epoch, backdoor=True, another_model=client.local_model))
+                    # fl_report.record_round_vars(self.test(epoch, backdoor=False, another_model=client.local_model))
+                    # fl_report.record_round_vars(self.test(epoch, backdoor=True, another_model=client.local_model))
             self.server.aggregate_global_model(self.clients, chosen_ids, None)
-            from prune_neuron_cifar import read_data, prune_by_threshold
-            mask_values = read_data(f'save/mask_values_{chosen_ids[0]}_False.txt')
-            mask_values = sorted(mask_values, key=lambda x: float(x[2]))
-            prune_by_threshold(self.server.global_model, mask_values, pruning_max=0.8, pruning_step=0.01)
+            # from prune_neuron_cifar import read_data, prune_by_threshold
+            # mask_values = read_data(f'save/mask_values_{chosen_ids[0]}_False.txt')
+            # mask_values = sorted(mask_values, key=lambda x: float(x[2]))
+            # prune_by_threshold(self.server.global_model, mask_values, pruning_max=0.8, pruning_step=0.01)
             fl_report.record_round_vars(self.test(epoch, backdoor=False))
             fl_report.record_round_vars(self.test(epoch, backdoor=True))
             print('-' * 30)
