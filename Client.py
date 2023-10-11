@@ -432,9 +432,9 @@ class Client(Clientbase):
             print(f'epoch:{epoch} train_loss:{train_loss} train_acc:{train_acc}')
         self.mask_scores = get_mask_scores(self.local_model.state_dict())
         save_mask_scores(self.local_model.state_dict(), f'save/mask_values_{self.client_id}_{self.is_malicious}.txt')
-        mask_values = read_data(f'save/mask_values_{self.client_id}_{self.is_malicious}.txt')
-        mask_values = sorted(mask_values, key=lambda x: float(x[2]))
-        print(f'{self.is_malicious} mask_values:{mask_values[0]} - {mask_values[10]}')
+        # mask_values = read_data(f'save/mask_values_{self.client_id}_{self.is_malicious}.txt')
+        # mask_values = sorted(mask_values, key=lambda x: float(x[2]))
+        # print(f'{self.is_malicious} mask_values:{mask_values[0]} - {mask_values[10]}')
         # prune_by_threshold(self.local_model, mask_values, pruning_max=0.4, pruning_step=0.5)
 
     def handcraft(self, task):
