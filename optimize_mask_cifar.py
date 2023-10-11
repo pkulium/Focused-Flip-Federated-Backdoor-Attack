@@ -224,7 +224,6 @@ def mask_train(model, criterion, mask_opt, noise_opt, data_loader):
 
     loss = total_loss / len(data_loader)
     acc = float(total_correct) / nb_samples
-    model.anp_eps = 0
     return loss, acc
 
 
