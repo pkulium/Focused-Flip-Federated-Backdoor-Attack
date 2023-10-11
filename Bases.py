@@ -128,7 +128,7 @@ class FederatedBackdoorExperiment:
             from prune_neuron_cifar import read_data, prune_by_threshold
             mask_values = read_data(f'save/mask_values_{chosen_ids[0]}_False.txt')
             mask_values = sorted(mask_values, key=lambda x: float(x[2]))
-            prune_by_threshold(self.server.global_model, mask_values, pruning_max=0.8, pruning_step=0.01)
+            prune_by_threshold(self.server.global_model, mask_values, pruning_max=1.0, pruning_step=0.01)
             fl_report.record_round_vars(self.test(epoch, backdoor=False))
             fl_report.record_round_vars(self.test(epoch, backdoor=True))
             print('-' * 30)
