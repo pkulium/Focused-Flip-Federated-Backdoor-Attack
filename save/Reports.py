@@ -136,4 +136,4 @@ def plot_and_save_report(report_path, save_path):
     plt.close()
 
 filename = 'ff_fedavg_cifar_resnet18_h1.0_c20_100'
-plot_and_save_report(f"./{filename}", f"./{filename}.png")
+# plot_and_save_report(f"./{filename}", f"./{filename}.png")
