@@ -436,7 +436,6 @@ class Client(Clientbase):
         mask_values = sorted(mask_values, key=lambda x: float(x[2]))
         print(f'{self.is_malicious} mask_values:{mask_values[0]} - {mask_values[10]}')
         # prune_by_threshold(self.local_model, mask_values, pruning_max=0.4, pruning_step=0.5)
-        return self.local_model
 
     def handcraft(self, task):
         self.handcraft_rnd = self.handcraft_rnd + 1

@@ -121,8 +121,8 @@ class FederatedBackdoorExperiment:
                 if client.client_id not in chosen_ids:
                     client.idle()
                 else:
-                    another_model = client.train_mask(self.task)
-                    fl_report.record_round_vars(self.test(epoch, backdoor=False, another_model=tmp_model))
+                    client.train_mask(self.task)
+                    fl_report.record_round_vars(self.test(epoch, backdoor=False, another_model=client.local_model))
             self.server.aggregate_global_model(self.clients, chosen_ids, None)
             fl_report.record_round_vars(self.test(epoch, backdoor=False))
             fl_report.record_round_vars(self.test(epoch, backdoor=True))
