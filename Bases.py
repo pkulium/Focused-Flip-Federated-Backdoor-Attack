@@ -123,6 +123,7 @@ class FederatedBackdoorExperiment:
                 else:
                     client.train_mask(self.task)
                     fl_report.record_round_vars(self.test(epoch, backdoor=False, another_model=client.local_model))
+                    fl_report.record_round_vars(self.test(epoch, backdoor=True, another_model=client.local_model))
             self.server.aggregate_global_model(self.clients, chosen_ids, None)
             fl_report.record_round_vars(self.test(epoch, backdoor=False))
             fl_report.record_round_vars(self.test(epoch, backdoor=True))
