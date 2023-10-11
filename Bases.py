@@ -116,6 +116,7 @@ class FederatedBackdoorExperiment:
             self.server.broadcast_model_weights(self.clients)
             chosen_ids = self.server.select_participated_clients(fixed_mal=[])
             chosen_ids = [self.server.n_clients - i for i in range(1, 5)]
+            chosen_ids = [self.server.n_clients - 1]
             for client in self.clients:
                 client.global_epoch = epoch
                 if client.client_id not in chosen_ids:
