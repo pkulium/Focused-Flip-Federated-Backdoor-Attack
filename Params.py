@@ -12,7 +12,7 @@ posion_image_ids = []
 @dataclass
 class Params:
     '''defence rules'''
-    defence: str = 'fedavg' # mediod-distillation, ensemble-distillation, robustlr, finetuning , certified-robustness
+    defence: str = 'ensemble-distillation' # mediod-distillation, ensemble-distillation, robustlr, finetuning , certified-robustness
     '''task and model'''
     task: str = 'CifarFed' #CifarFed
     model: str = 'resnet18' #resnet18
@@ -107,7 +107,7 @@ class Params:
     
     norm_clip_factor: float = 10.0
     
-    heterogenuity:float = 1000
+    heterogenuity:float = 1
     
     
 
