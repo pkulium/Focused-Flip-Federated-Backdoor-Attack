@@ -107,7 +107,7 @@ class Params:
     
     norm_clip_factor: float = 10.0
     
-    heterogenuity:float = 1.0
+    heterogenuity:float = 1000
     
     
 
