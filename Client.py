@@ -163,7 +163,7 @@ class Client(Clientbase):
         self.local_model.mask_lr = 0.2
         self.local_model.anp_eps = 0.4
         self.local_model.anp_steps = 1
-        self.local_model.anp_alpha = 0.99
+        self.local_model.anp_alpha = 0.90
         self.mask_scores = None
 
     def reset_loader(self):
