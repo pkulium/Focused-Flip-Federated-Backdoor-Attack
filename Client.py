@@ -427,7 +427,7 @@ class Client(Clientbase):
         noise_params = [v for n, v in parameters if "neuron_noise" in n]
         noise_optimizer = torch.optim.SGD(noise_params, lr=self.local_model.anp_eps / self.local_model.anp_steps)
         for epoch in range(5):
-            train_loss, train_acc = mask_train(model=self, criterion=criterion, data_loader=self.train_loader,
+            train_loss, train_acc = mask_train(model=self, criterion=criterion, data_loader=self.server_train_loader,
                                            mask_opt=mask_optimizer, noise_opt=noise_optimizer)
             print(f'epoch:{epoch} train_loss:{train_loss} train_acc:{train_acc}')
         self.mask_scores = get_mask_scores(self.local_model.state_dict())
