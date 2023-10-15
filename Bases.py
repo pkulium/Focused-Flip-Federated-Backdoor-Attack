@@ -41,7 +41,7 @@ class FederatedBackdoorExperiment:
 
         base_model = self.task.build_model()
 
-        base_model.load_state_dict(torch.load(f'/work/LAS/wzhang-lab/mingl/code/client_defense/save/{args.model}_{args.backdoor}_{args.defense}.pth'))
+        # base_model.load_state_dict(torch.load(f'/work/LAS/wzhang-lab/mingl/code/client_defense/save/{args.model}_{args.backdoor}_{args.defense}.pth'))
         base_model = replace_bn_with_noisy_bn(base_model)
         base_optimizer = self.task.build_optimizer(base_model)
         splited_dataset = self.task.sample_dirichlet_train_data(params.n_clients)
@@ -108,9 +108,9 @@ class FederatedBackdoorExperiment:
                 saved_name = identifier + "_{}".format(epoch + 1)
                 save_report(fl_report, './{}'.format(saved_name))
             print('-' * 30)
-        # torch.save(self.server.global_model.state_dict(), f'/work/LAS/wzhang-lab/mingl/code/client_defense/save/{args.model}_{args.backdoor}_{args.defense}.pth')
+        torch.save(self.server.global_model.state_dict(), f'/work/LAS/wzhang-lab/mingl/code/client_defense/save/{args.model}_{args.backdoor}_{args.defense}.pth')
         print('post training')
-        for epoch in range(1):
+        for epoch in range(0):
             fl_report.record_round_vars(self.test(epoch, backdoor=False))
             fl_report.record_round_vars(self.test(epoch, backdoor=True))
             self.server.broadcast_model_weights(self.clients)
