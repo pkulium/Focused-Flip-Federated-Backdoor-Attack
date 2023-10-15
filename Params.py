@@ -12,7 +12,7 @@ posion_image_ids = []
 @dataclass
 class Params:
     '''defence rules'''
-    defence: str = 'ensemble-distillation' # mediod-distillation, ensemble-distillation, robustlr, finetuning , certified-robustness
+    defence: str = 'fedavg' # mediod-distillation, ensemble-distillation, robustlr, finetuning , certified-robustness
     '''task and model'''
     task: str = 'CifarFed' #CifarFed
     model: str = 'simple' #resnet18
