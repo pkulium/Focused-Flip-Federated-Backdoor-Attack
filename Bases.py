@@ -42,7 +42,7 @@ class FederatedBackdoorExperiment:
         base_model = self.task.build_model()
 
         # base_model.load_state_dict(torch.load(f'/work/LAS/wzhang-lab/mingl/code/client_defense/save/{args.model}_{args.backdoor}_{args.defense}.pth'))
-        base_model = replace_bn_with_noisy_bn(base_model)
+        # base_model = replace_bn_with_noisy_bn(base_model)
         base_optimizer = self.task.build_optimizer(base_model)
         splited_dataset = self.task.sample_dirichlet_train_data(params.n_clients)
         server_sample_ids = splited_dataset[params.n_clients]
