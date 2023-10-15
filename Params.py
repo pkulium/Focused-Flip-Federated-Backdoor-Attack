@@ -119,7 +119,7 @@ class Params:
 #     attention_visualization: bool = False
     
     #server_dataset
-    server_dataset = False
+    server_dataset = True
     resultdir = 'result-fedavg'
 
     def __post_init__(self):
