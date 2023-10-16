@@ -160,7 +160,7 @@ class Client(Clientbase):
 
         self.local_model = replace_bn_with_noisy_bn(self.local_model)
         self.local_model = self.local_model.to(self.device)
-        self.local_model.mask_lr = 0.02
+        self.local_model.mask_lr = 0.001
         self.local_model.anp_eps = 0.4
         self.local_model.anp_steps = 1
         self.local_model.anp_alpha = 0.2
