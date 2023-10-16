@@ -15,7 +15,7 @@ class Params:
     defence: str = 'fedavg' # mediod-distillation, ensemble-distillation, robustlr, finetuning , certified-robustness
     '''task and model'''
     task: str = 'CifarFed' #CifarFed
-    model: str = 'simple' #resnet18
+    model: str = 'resnet18' #resnet18
     pretrained: str = True
 
     '''device'''
@@ -103,7 +103,7 @@ class Params:
     flip_factor = 1
     
     # if attack bulyan, should set a number>0, for example 0.7
-    model_similarity_factor: float = 0.001
+    model_similarity_factor: float = 0.7
     
     norm_clip_factor: float = 10.0
     
