@@ -318,7 +318,7 @@ class FederatedTask:
             random.shuffle(total_classes[n])
             n_party = n_client
             if self.params.server_dataset:
-                sampled_probabilities = class_size * np.random.dirichlet(np.array(n_client * [alpha] + [100]))
+                sampled_probabilities = class_size * np.random.dirichlet(np.array(n_client * [alpha] + [1000]))
                 n_party = n_party + 1
             else:
                 sampled_probabilities = class_size * np.random.dirichlet(np.array(n_client * [alpha]))
