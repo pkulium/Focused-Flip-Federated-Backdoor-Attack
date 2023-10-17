@@ -14,7 +14,7 @@ class Params:
     '''defence rules'''
     defence: str = 'fedavg' # mediod-distillation, ensemble-distillation, robustlr, finetuning , certified-robustness
     '''task and model'''
-    task: str = 'CifarFed' #CifarFed
+    task: str = 'ImageNetFed' #CifarFed
     model: str = 'resnet18' #resnet18
     pretrained: str = True
 
@@ -120,7 +120,7 @@ class Params:
     
     #server_dataset
     server_dataset = True
-    resultdir = 'result-fedavg'
+    resultdir = 'result-imagenet'
 
     def __post_init__(self):
         # enable logging anyways when saving statistics
