@@ -28,7 +28,7 @@ class Params:
     test_batch_size: int = 32
     batch_size: int = 64
     local_epoch: int =2
-    n_epochs: int = 50
+    n_epochs: int = 100
 
     max_batch_id: int = None
     input_shape = None
