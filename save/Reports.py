@@ -135,5 +135,6 @@ def plot_and_save_report(report_path, save_path):
     plt.savefig(save_path, format='png')  # Save the plot to the specified path
     plt.close()
 
-# filename = 'neurotoxin_fedavg_cifar_resnet18_h1_c20_100'
+# filename = 'naive_fedavg_imagenet_resnet18_h1_c20_100'
+# filename = 'neurotoxin_fedavg_imagenet_resnet18_h1_c20_100'
 # plot_and_save_report(f"./{filename}", f"./{filename}.png")
